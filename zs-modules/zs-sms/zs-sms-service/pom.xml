@@ -7,7 +7,6 @@
         <groupId>com.zs</groupId>
         <artifactId>zs-modules</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>zs-sms-service</artifactId>
