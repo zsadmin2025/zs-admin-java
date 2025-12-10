@@ -2,7 +2,7 @@
 *.class
 
 # Log file
-*.log
+*.logs
 
 # BlueJ files
 *.ctxt
@@ -44,4 +44,3 @@ out/
 # Logs
 logs/
 *.log.*
-log/
