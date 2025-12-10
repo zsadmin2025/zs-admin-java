@@ -6,6 +6,7 @@ import cn.hutool.captcha.generator.RandomGenerator;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.http.useragent.UserAgent;
 import cn.hutool.http.useragent.UserAgentUtil;
+import com.zs.common.aop.annotation.LoginLog;
 import com.zs.common.core.constant.RedisConstants;
 import com.zs.common.core.core.HttpEnum;
 import com.zs.common.core.core.Result;
@@ -54,6 +55,7 @@ public class LoginServiceImpl implements ILoginService {
     private JwtUtil jwtUtil;
 
 
+    @LoginLog
     @Override
     public Result<TokenVO> login(LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) {
 
