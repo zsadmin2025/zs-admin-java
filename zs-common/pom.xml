@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.zs</groupId>
+        <artifactId>zs-project-java</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>zs-common</artifactId>
+    <description>公共模块</description>
+    <packaging>pom</packaging>
+
+    <modules>
+        <module>zs-common-aop</module>
+        <module>zs-common-core</module>
+        <module>zs-common-mybatis</module>
+        <module>zs-common-redis</module>
+        <module>zs-common-security</module>
+    </modules>
+
+    <properties>
+        <hutool-all.version>5.8.40</hutool-all.version>
+        <jjwt.version>0.12.6</jjwt.version>
+        <fastjson2.version>2.0.49</fastjson2.version>
+        <ip2region.version>2.7.0</ip2region.version>
+        <lettuce-core.version>6.5.1.RELEASE</lettuce-core.version>
+        <mybatisplus.version>3.5.7</mybatisplus.version>
+        <fastexcel.version>1.0.0</fastexcel.version>
+        <aliyun.oss.version>3.17.3</aliyun.oss.version>
+        <aliyun.sms.version>4.2.0</aliyun.sms.version>
+        <tencent.cos_api.version>5.6.257</tencent.cos_api.version>
+        <huawei.obs.version>3.25.7</huawei.obs.version>
+        <qiniu.kodo.version>7.19.0</qiniu.kodo.version>
+        <knife4j.version>4.5.0</knife4j.version>
+        <bcpkix-jdk18on.version>1.78.1</bcpkix-jdk18on.version>
+
+
+    </properties>
+
+
+    <dependencies>
+
+
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>${hutool-all.version}</version>
+        </dependency>
+
+
+        <!-- jwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jjwt.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-jackson</artifactId>
+            <version>${jjwt.version}</version>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- redis -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-redis</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>io.lettuce</groupId>
+                    <artifactId>lettuce-core</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.lettuce</groupId>
+            <artifactId>lettuce-core</artifactId>
+            <version>${lettuce-core.version}</version>
+        </dependency>
+        <!-- lettuce pool 缓存连接池-->
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-pool2</artifactId>
+        </dependency>
+
+        <!-- mybatis plus-->
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatisplus.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis</groupId>
+                    <artifactId>mybatis-spring</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.mybatis</groupId>
+            <artifactId>mybatis-spring</artifactId>
+            <version>3.0.3</version>
+        </dependency>
+
+        <!--        <dependency>-->
+        <!--            <groupId>p6spy</groupId>-->
+        <!--            <artifactId>p6spy</artifactId>-->
+        <!--            <version>3.9.1</version>-->
+        <!--        </dependency>-->
+
+        <dependency>
+            <groupId>org.lionsoul</groupId>
+            <artifactId>ip2region</artifactId>
+            <version>${ip2region.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.idev.excel</groupId>
+            <artifactId>fastexcel</artifactId>
+            <version>${fastexcel.version}</version>
+        </dependency>
+
+
+        <!--阿里云oss-->
+        <dependency>
+            <groupId>com.aliyun.oss</groupId>
+            <artifactId>aliyun-sdk-oss</artifactId>
+            <version>${aliyun.oss.version}</version>
+        </dependency>
+        <!-- java 9以上， 添加如下-->
+        <dependency>
+            <groupId>javax.xml.bind</groupId>
+            <artifactId>jaxb-api</artifactId>
+            <version>2.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.activation</groupId>
+            <artifactId>activation</artifactId>
+            <version>1.1.1</version>
+        </dependency>
+        <!-- no more than 2.3.3-->
+        <dependency>
+            <groupId>org.glassfish.jaxb</groupId>
+            <artifactId>jaxb-runtime</artifactId>
+            <version>2.3.3</version>
+        </dependency>
+
+        <!-- 腾讯云cos  -->
+        <dependency>
+            <groupId>com.qcloud</groupId>
+            <artifactId>cos_api</artifactId>
+            <version>${tencent.cos_api.version}</version>
+        </dependency>
+
+
+        <!-- 华为云obs -->
+        <dependency>
+            <groupId>com.huaweicloud</groupId>
+            <artifactId>esdk-obs-java-bundle</artifactId>
+            <version>${huawei.obs.version}</version>
+        </dependency>
+
+        <!-- 七牛云kodo -->
+        <dependency>
+            <groupId>com.qiniu</groupId>
+            <artifactId>qiniu-java-sdk</artifactId>
+            <version>${qiniu.kodo.version}</version>
+        </dependency>
+
+        <!-- 阿里云短信 -->
+        <dependency>
+            <groupId>com.aliyun</groupId>
+            <artifactId>dysmsapi20170525</artifactId>
+            <version>${aliyun.sms.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi3-jakarta-spring-boot-starter</artifactId>
+            <version>${knife4j.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.bouncycastle</groupId>
+            <artifactId>bcpkix-jdk18on</artifactId>
+            <version>${bcpkix-jdk18on.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>org.jeecgframework.jimureport</groupId>
+            <artifactId>jimureport-spring-boot3-starter</artifactId>
+            <version>2.1.5</version>
+        </dependency>
+
+
+    </dependencies>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
+
+</project>

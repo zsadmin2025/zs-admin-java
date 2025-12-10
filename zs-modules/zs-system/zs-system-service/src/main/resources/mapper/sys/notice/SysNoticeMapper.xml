@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.sys.notice.mapper.SysNoticeMapper">
+    <select id="page" resultType="com.zs.sys.notice.domain.entity.SysNoticeEntity">
+        select a.*,b.real_name from sys_notice a
+        left join sys_user b on a.creator = b.sys_user_id
+        <where>
+            <if test="params.title != '' and params.title != null">
+                AND a.title LIKE CONCAT('%', #{params.title}, '%')
+            </if>
+            <if test="params.content != '' and params.content != null">
+                AND a.content LIKE CONCAT('%', #{params.content}, '%')
+            </if>
+            <if test="params.type != '' and params.type != null">
+                AND a.type = #{params.type}
+            </if>
+            <if test="params.level != '' and params.level != null">
+                AND a.level = #{params.level}
+            </if>
+            <if test="params.status != null">
+                AND a.status = #{params.status}
+            </if>
+
+        </where>
+    </select>
+    <select id="get" resultType="com.zs.sys.notice.domain.entity.SysNoticeEntity">
+
+        select a.*, b.real_name
+        from sys_notice a
+                 left join sys_user b on a.creator = b.sys_user_id
+        where a.sys_notice_id = #{sysNoticeId}
+    </select>
+</mapper>

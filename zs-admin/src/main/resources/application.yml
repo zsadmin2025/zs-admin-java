@@ -1,0 +1,185 @@
+server:
+  port: 8080
+  address: 0.0.0.0
+  tomcat:
+    connection-timeout: 20000 # 请求超时时间, 单位毫秒
+  forward-headers-strategy: native
+spring:
+  profiles:
+    active: dev
+  jackson:
+    time-zone: GMT+8
+    date-format: yyyy-MM-dd HH:mm:ss
+  main:
+    allow-bean-definition-overriding: true
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 100MB # 文件上传单个文件大小限制
+      max-request-size: 200MB # 请求上传文件总大小限制
+  quartz:
+    job-store-type: jdbc
+    jdbc:
+      initialize-schema: never
+    auto-startup: true
+
+
+# mybatis-plus
+mybatis-plus:
+  type-aliases-package: com.zs.*.entity
+  mapper-locations: classpath*:/mapper/**/*.xml
+  global-config:
+    db-config:
+      #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
+      id-type: assign_id
+    # 控制台是否开启mybatis-plus logo
+    banner: false
+  configuration:
+    # 驼峰
+    map-underscore-to-camel-case: true
+    call-setters-on-nulls: true
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+#多租户配置
+tenant:
+  # 是否启用多租户
+  enable: true
+  # 多租户字段
+  column: tenant_id
+  filterTables:
+  # 忽略的表前缀
+  ignoreTablePrefix:
+    - jimu_
+    - qrtz_
+    - gen_
+  # 忽略的表
+  ignoreTables:
+    - sys_tenant
+    - sys_tenant_package
+    - sys_tenant_package_menu
+    - sys_tenant_package_rel
+    - sys_config
+    - sys_job
+    - sys_dict_data
+    - sys_dict_type
+    - sys_menu
+  ignoreLoginNames:
+
+security:
+  white:
+    url:
+      - /auth/login
+      - /auth/captcha
+      #- /auth/logout
+      - /actuator/** # 允许访问执行器端点
+      - /instances/** # 允许访问 Spring Boot Admin 实例
+      - /assets/** # 允许访问静态资产（CSS、JS 等）
+      - /druid/**
+      - /system/sys/tenant/select
+      - /system/sys/config/website
+      - /doc.html
+      - /websocket/**
+      - /jmreport/**
+      - /favicon.ico
+      - /file/**
+jwt:
+  # 密钥 长度256
+  secret: QxXJ18vaaiH0781h6rzMurcyJNzcGtsWYfzc/OyqKBI=
+  # 有效时间单位秒 当前为24小时
+  expiration: 86400
+
+springdoc:
+  swagger-ui:
+    tags-sorter: alpha
+    operations-sorter: alpha
+  packages-to-scan: com.zs
+knife4j:
+  # 开启增强配置
+  enable: true
+  basic:
+    enable: false
+    username: zsadmin
+    password: zsadmin
+  setting:
+    language: zh_cn
+    # 是否显示结案中"文档管理"功能
+    enable-document-manage: true
+    # 开启版本控制
+    enable-version: true
+    # 开启动态请求参数，true-开启，false-关闭
+    enable-dynamic-parameter: true
+    # 是否显示Model
+    enable-swagger-models: false
+
+logging:
+  file:
+    name: logs/app.log # 指定日志文件名
+    # 或者指定日志文件路径
+    path: logs/
+  level:
+    root: INFO
+    org.jeecg: ERROR
+    org.jeecgframework.minidao: ERROR
+    org.quartz: ERROR
+    org.springframework.web.socket: WARN
+    org.springframework.web.SimpLogging: WARN
+    org.springframework.web.servlet.DispatcherServlet: INFO
+    org:
+      springframework:
+        web: DEBUG # 控制台将详细输出web请求信息
+        security: error # 控制台将详细输出Spring Security信息
+        scheduling:
+          quartz: ERROR # 控制台将详细输出Quartz信息
+
+# 验证码
+aj:
+  captcha:
+    jigsaw: # # 滑动验证，底图路径，不配置将使用默认图片  支持全路径 支持项目路径,以classpath:开头,取resource目录下路径,例：classpath:images/jigsaw
+    pic-click: #  #滑动验证，底图路径，不配置将使用默认图片 支持全路径 支持项目路径,以classpath:开头,取resource目录下路径,例：classpath:images/pic-click
+    cache-type: redis # 缓存类型
+    type: blockPuzzle # 验证码类型 blockPuzzle-滑块拼图 clickWord-文字点选 default-默认
+    water-mark: 我的水印 # 水印
+    slip-offset: 5 # 滑块偏移量
+    aes-status: false # 是否开启AES加密
+    interference-options: 0 # 干扰线条数量
+    font-style: 1 # 字体样式
+    font-size: 25 # 字体大小
+    history-data-clear-enable: false # 是否开启历史数据清理
+    req-frequency-limit-enable: false # 是否开启请求频率限制
+    req-get-lock-limit: 5 # 获取验证码锁限制
+    req-get-lock-seconds: 300 # 获取验证码锁时间
+    req-get-minute-limit: 100 # 每分钟获取验证码次数
+    req-check-minute-limit: 100 # 每分钟验证次数
+    req-verify-minute-limit: 100 # 每分钟验证次数
+
+# 报表相关
+jeecg :
+  jmreport:
+    #多租户模式，默认值为空(created:按照创建人隔离、tenant:按照租户隔离) (v1.6.2+ 新增)
+    saasMode: tenant
+    # 平台上线安全配置(v1.6.2+ 新增)
+    firewall:
+      # 数据源安全 (开启后，不允许使用平台数据源、SQL解析不允许select * 查询、禁止测试数据源连接是否正确)
+      # 数据源安全下，预留角色有权限使用 select * 和测试数据源链接
+      dataSourceSafe: true
+      # 低代码开发模式（dev:开发模式，prod:发布模式关闭报表设计，预留角色admin、lowdeveloper可设计, prodsf:发布安全模式 彻底关闭报表设计）
+      lowCodeMode: prod
+      # api数据集内网ip白名单，在发布模式下只只能向设置了白名单的内网服务器发送请求。
+#      apiDsIpWhite:
+#        - 192.168.1.69
+#        - 192.168.1.2
+#        - 10.22.1.0/24
+      # sql注入检查级别（strict:严格, basic:简单校验, none:不校验）
+      sqlInjectionLevel: strict
+
+# 代码生成
+gen:
+  # 作者
+  author: zs
+  # 默认生成包路径 system 需改成自己的模块名称 如 system monitor tool
+  packageName: com.zs.system
+  # 自动去除表前缀，默认是false
+  autoRemovePre: false
+  # 表前缀（生成类名不会包含表前缀，多个用逗号分隔）
+  tablePrefix:

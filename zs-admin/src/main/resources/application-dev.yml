@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/zs_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: root
+    password: root
+    druid:
+      initial-size: 10 # 初始化连接数
+      min-idle: 5 # 最小空闲连接数
+      max-active: 50 # 最大连接数
+      test-on-borrow: true # 测试连接是否可用
+      validation-query: SELECT 1 # 检测连接是否有效的 SQL 语句。MySQL: SELECT 1。Oracle: SELECT 1 FROM DUAL。PostgreSQL: SELECT 1
+      time-between-eviction-runs-millis: 60000 # 清理无效连接的间隔时间（单位：毫秒）
+      max-evictable-idle-time-millis: 300000 # 连接最大空闲时间，强制回收
+      min-evictable-idle-time-millis: 300000 # 连接最小空闲时间，超过该时间自动回收
+
+      # 泄漏检测
+      remove-abandoned: true # 是否开启自动回收无效连接
+      remove-abandoned-timeout: 300 # 超时时间，超过该时间将回收(单位：秒)
+
+      # 监控
+      use-global-data-source-stat: true # 合并多个DruidDataSource的监控数据
+      web-stat-filter:
+        enabled: true # 是否开启web监控
+        exclusions: "*.js,*.gif,*.jpg,*.png,*.css,*.ico,/druid/*" # 排除监控的URL路径
+      stat-view-servlet:
+        enabled: true # 是否开启监控页面
+        url-pattern: /druid/* # 监控页面的访问路径
+        login-username: zsadmin
+        login-password: zsadmin
+      filter:
+        stat:
+          enabled: true # 是否开启统计功能
+          log-slow-sql: true # 是否打印慢SQL
+          slow-sql-millis: 2000 # 慢SQL的毫秒数
+          merge-sql: true # 是否合并SQL
+  data:
+    redis:
+      host: 127.0.0.1 #39.101.195.100
+      port: 6379
+      password: #Zs@123..
+      database: 0
+      # 毫秒
+      timeout: 10000
+      lettuce:
+        pool:
+          max-active: 10
+          max-wait: -1
+          max-idle: 5
+          min-idle: 0

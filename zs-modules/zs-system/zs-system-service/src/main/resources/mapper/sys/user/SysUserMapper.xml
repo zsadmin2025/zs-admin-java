@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.sys.user.mapper.SysUserMapper">
+
+    <select id="page" resultType="com.zs.sys.user.domain.entity.SysUserEntity">
+
+
+        SELECT a.*,b.dept_name,c.post_name
+        FROM `sys_user` a
+        left join sys_dept b on a.sys_dept_id = b.sys_dept_id
+        left join sys_post c on c.sys_post_id = a.sys_post_id
+        <where>
+            a.is_admin = 0 and a.deleted = 0
+            <if test="params.username != null and params.username != ''">
+                AND a.username LIKE CONCAT('%', #{params.username}, '%')
+            </if>
+
+            <if test="params.realName != null and params.realName != ''">
+                AND a.real_name LIKE CONCAT('%', #{params.realName}, '%')
+            </if>
+
+            <if test="params.phone != null and params.phone != ''">
+                AND a.phone LIKE CONCAT('%', #{params.phone}, '%')
+            </if>
+
+            <if test="params.sex != null and params.sex != ''">
+                AND a.sex = #{params.sex}
+            </if>
+            <if test="params.email != null and params.email != ''">
+                AND a.email LIKE CONCAT('%', #{params.email}, '%')
+            </if>
+            <if test="params.employeeNumber != null and params.employeeNumber != ''">
+                AND a.employee_number LIKE CONCAT('%', #{params.employeeNumber}, '%')
+            </if>
+            <if test="params.status != null">
+                AND a.status = #{params.status}
+            </if>
+
+            <if test="params.deptList != null and params.deptList.size() > 0">
+                and b.sys_dept_id in
+                <foreach item="id" collection="params.deptList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+            <if test="params.sysPostId != null and params.sysPostId != ''">
+                AND c.sys_post_id = #{params.sysPostId}
+            </if>
+        </where>
+    </select>
+
+
+
+    <select id="selectByUserName" resultType="com.zs.sys.user.domain.entity.SysUserEntity">
+        SELECT a.*, b.dept_name, c.post_name
+        FROM `sys_user` a
+                 LEFT JOIN sys_dept b ON b.sys_dept_id = a.sys_dept_id
+                 LEFT JOIN sys_post c ON c.sys_post_id = a.sys_post_id
+        WHERE a.username = #{username}
+    </select>
+    <select id="getList" resultType="com.zs.sys.user.domain.entity.SysUserEntity">
+        select a.*,b.dept_name,c.post_name
+        from sys_user a
+        left join sys_dept b on a.sys_dept_id = b.sys_dept_id
+        left join sys_post c on c.sys_post_id = a.sys_post_id
+        <where>
+            a.is_admin = 0 and a.deleted = 0
+            <if test="params.username != null and params.username != ''">
+                AND a.username LIKE CONCAT('%', #{params.username}, '%')
+            </if>
+            <if test="params.realName != null and params.realName != ''">
+                AND a.real_name LIKE CONCAT('%', #{params.realName}, '%')
+            </if>
+            <if test="params.phone != null and params.phone != ''">
+                AND a.phone LIKE CONCAT('%', #{params.phone}, '%')
+            </if>
+            <if test="params.sex != null and params.sex != ''">
+                AND a.sex = #{params.sex}
+            </if>
+            <if test="params.status != null and params.status != ''">
+                AND a.status = #{params.status}
+            </if>
+            <if test="params.deptList.size > 0">
+                and b.sys_dept_id in
+                <foreach item="id" collection="params.deptList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="getUserList" resultType="com.zs.sys.user.domain.entity.SysUserEntity">
+        select a.*,b.dept_name,c.post_name
+        from sys_user a
+        left join sys_dept b on a.sys_dept_id = b.sys_dept_id
+        left join sys_post c on c.sys_post_id = a.sys_post_id
+        where a.deleted = 0 and a.sys_user_id in
+        <foreach item="id" collection="sysUserIds" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </select>
+    <update id="updateDeleted">
+        update sys_user
+        set deleted = 1
+        where sys_user_id = #{sysUserId}
+    </update>
+</mapper>

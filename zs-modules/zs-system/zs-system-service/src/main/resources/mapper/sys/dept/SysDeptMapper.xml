@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.sys.dept.mapper.SysDeptMapper">
+    <select id="getSubDeptIdList" resultType="java.lang.Long">
+        select sys_dept_id
+        from sys_dept
+        where pids like CONCAT('%', #{sysDeptId}, '%')
+    </select>
+    <select id="getList" resultType="com.zs.sys.dept.domain.entity.SysDeptEntity">
+        select a.*,b.real_name as dept_head_name from sys_dept a
+        left join sys_user b on b.sys_user_id = a.dept_head_id
+
+        <where>
+            a.status = 1
+            <if test="deptHeadId != null and deptHeadId != ''">
+                and a.dept_head_id = #{deptHeadId}
+            </if>
+            <if test="deptName != null and deptName != ''">
+                and a.dept_name like CONCAT('%',#{deptName},'%')
+            </if>
+        </where>
+        ORDER BY a.sort
+    </select>
+    <select id="getBySysDeptId" resultType="com.zs.sys.dept.domain.entity.SysDeptEntity">
+        select a.*, b.real_name as dept_head_name
+        from sys_dept a
+                 left join sys_user b on b.sys_user_id = a.dept_head_id
+        where a.dept_head_id = #{deptHeadId}
+    </select>
+    <select id="page" resultType="com.zs.sys.dept.domain.entity.SysDeptEntity">
+        SELECT *
+        FROM sys_dept
+        <where>
+            <if test="ew != null">
+                ${ew.sqlSegment}
+            </if>
+        </where>
+    </select>
+</mapper>

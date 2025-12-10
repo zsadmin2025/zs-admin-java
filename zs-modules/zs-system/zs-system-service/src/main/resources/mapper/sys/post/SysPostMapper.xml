@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.sys.post.mapper.SysPostMapper">
+    <select id="page" resultType="com.zs.sys.post.domain.entity.SysPostEntity">
+
+        SELECT
+        a.*,
+        b.dept_name
+        FROM
+        sys_post a
+        LEFT JOIN sys_dept b ON b.sys_dept_id = a.sys_dept_id
+        <where>
+            <if test="params.status != null">
+                a.status = #{params.status}
+            </if>
+            <if test="params.postName != null and params.postName != ''">
+                and a.post_name like CONCAT('%',#{params.postName},'%')
+            </if>
+            <if test="params.deptList != null and params.deptList.size > 0">
+                and a.sys_dept_id in
+                <foreach item="id" collection="params.deptList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+    </select>
+    <select id="getList" resultType="com.zs.sys.post.domain.entity.SysPostEntity">
+        SELECT a.*,b.dept_name FROM sys_post a
+        left join sys_dept b on b.sys_dept_id = a.sys_dept_id
+        <where>
+            <if test="params.status != null and params.status != ''">
+                a.status = #{params.status}
+            </if>
+            <if test="params.postName != null and params.postName != ''">
+                and a.post_name like CONCAT('%',#{params.postName},'%')
+            </if>
+            <if test="params.deptList.size > 0">
+                and a.sys_dept_id in
+                <foreach item="id" collection="params.deptList" open="(" separator="," close=")">
+                    #{id}
+                </foreach>
+            </if>
+        </where>
+        order by a.sort
+    </select>
+</mapper>

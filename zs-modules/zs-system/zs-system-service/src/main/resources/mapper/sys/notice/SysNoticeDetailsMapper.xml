@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.sys.notice.mapper.SysNoticeDetailsMapper">
+    <select id="list" resultType="com.zs.sys.notice.domain.entity.SysNoticeDetailsEntity">
+        select a.*, b.real_name
+        from sys_notice_details a
+                 left join sys_user b on a.receiver_id = b.sys_user_id
+        where a.sys_notice_id = #{sysNoticeId}
+    </select>
+</mapper>
