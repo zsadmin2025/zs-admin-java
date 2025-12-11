@@ -126,14 +126,14 @@ logging:
     org.quartz: ERROR
     org.springframework.web.socket: WARN
     org.springframework.web.SimpLogging: WARN
-    org.springframework.web.servlet.DispatcherServlet: INFO
+    org.springframework.web.servlet.DispatcherServlet: DEBUG
     org:
       springframework:
         web: DEBUG # 控制台将详细输出web请求信息
         security: error # 控制台将详细输出Spring Security信息
         scheduling:
           quartz: ERROR # 控制台将详细输出Quartz信息
-
+    com.zs: DEBUG
 # 验证码
 aj:
   captcha:
