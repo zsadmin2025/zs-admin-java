@@ -27,7 +27,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
         // 前端连接地址：/ws?access_token=xxx（或通过 Cookie/Spring Security 自动认证）
-        registry.addEndpoint("/ws") // 端点
+        registry.addEndpoint("/api/ws") // 端点
                 .setAllowedOriginPatterns("*") // 允许跨域
 //                .withSockJS()
         ; // 启用SockJS，兼容性更好
