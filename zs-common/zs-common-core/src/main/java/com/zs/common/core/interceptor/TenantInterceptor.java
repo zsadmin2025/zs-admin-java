@@ -80,7 +80,7 @@ public class TenantInterceptor implements HandlerInterceptor {
         String uri = request.getRequestURI();
 
         for (String whitePath : WHITE_LIST) {
-            if (uri.startsWith(whitePath)) {
+            if (uri.contains(whitePath)) {
                 return true;
             }
         }

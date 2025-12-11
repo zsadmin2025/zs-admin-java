@@ -4,8 +4,6 @@ server:
   tomcat:
     connection-timeout: 20000 # 请求超时时间, 单位毫秒
   forward-headers-strategy: native
-  servlet:
-    context-path: /api
 spring:
   profiles:
     active: dev
