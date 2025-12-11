@@ -5,9 +5,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.zs</groupId>
-        <artifactId>zs-modules</artifactId>
+        <artifactId>zs-sms</artifactId>
         <version>1.0.0</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
 
     <artifactId>zs-sms-service</artifactId>
