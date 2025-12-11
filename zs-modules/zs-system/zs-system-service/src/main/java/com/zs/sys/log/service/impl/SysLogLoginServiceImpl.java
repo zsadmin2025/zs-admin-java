@@ -74,8 +74,7 @@ public class SysLogLoginServiceImpl extends ServiceImpl<SysLogLoginMapper, SysLo
                 .eq(Strings.isNotEmpty(sysLogLoginQueryParams.getCity()), SysLogLoginEntity::getCity, sysLogLoginQueryParams.getCity())
                 .eq(Objects.nonNull(sysLogLoginQueryParams.getLoginStatus()), SysLogLoginEntity::getLoginStatus, sysLogLoginQueryParams.getLoginStatus())
                 .eq(Strings.isNotEmpty(sysLogLoginQueryParams.getBrowser()), SysLogLoginEntity::getBrowser, sysLogLoginQueryParams.getBrowser())
-                .eq(Strings.isNotEmpty(sysLogLoginQueryParams.getOs()), SysLogLoginEntity::getOs, sysLogLoginQueryParams.getOs())
-                .orderByDesc(SysLogLoginEntity::getLoginTime);
+                .eq(Strings.isNotEmpty(sysLogLoginQueryParams.getOs()), SysLogLoginEntity::getOs, sysLogLoginQueryParams.getOs());
 
         return wrapper;
     }
