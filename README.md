@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./src/assets/logo.png" alt="ZS-Admin Logo" width="180" />
+  <img src="https://zs-admin.oss-cn-beijing.aliyuncs.com/logo.png" alt="ZS-Admin Logo" width="180" />
   <h1>ZS-Admin</h1>
   <p>🚀 企业级前后端分离快速开发平台 · 开箱即用 · 安全 · 可扩展</p>
 
@@ -34,7 +34,7 @@
 | 🖥️ **在线演示** | [http://demo.zsadmin.top](http://demo.zsadmin.top) |
 | 👤 演示账号     | `admin / 123456`（请勿修改关键配置）               |
 
-## <img src="./src/assets/work.png" alt="ZS-Admin Logo" />
+## <img src="https://zs-admin.oss-cn-beijing.aliyuncs.com/work.png" alt="ZS-Admin Logo" />
 
 ## ⚙️ 技术栈
 
