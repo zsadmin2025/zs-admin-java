@@ -26,9 +26,11 @@ public class TenantInterceptor implements HandlerInterceptor {
             // 🔹 接口文档
             "/doc.html",
             "/v3/api-docs",
-            "/v3/api-docs/swagger-config",
             "/v3/api-docs/**",
-            "/webjars/",
+            "/webjars",
+            "/webjars/**",
+            "/swagger-resources",
+            "/swagger-resources/**",
             "/swagger-ui/index.html",
 
             // 🔹 监控类
