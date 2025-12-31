@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties(prefix = "gen")
 @Data
-public class GenConfig {
+public class GenConfigProperties {
 
     /** 作者 */
     public  String author;
@@ -15,13 +15,16 @@ public class GenConfig {
     /** 生成包路径 */
     public  String packageName;
 
+    /** 默认模块名称 */
+    public  String moduleName;
+
     /** 生成基础路径 */
     public  String basePath;
 
     /** 是否包含主键ID */
     public  boolean autoRemovePre;
 
-    /** 表前缀（生成类名不会包含表前缀） */
+    /** 是否移除表前缀（默认是false）**/
     public  String tablePrefix;
 
 }
