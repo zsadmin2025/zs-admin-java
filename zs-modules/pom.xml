@@ -12,6 +12,13 @@
     <packaging>pom</packaging>
 
 
+<!--    <modules>-->
+<!--        <module>zs-file</module>-->
+<!--        <module>zs-mail</module>-->
+<!--        <module>zs-sms</module>-->
+<!--        <module>zs-system</module>-->
+<!--        <module>zs-websocket</module>-->
+<!--    </modules>-->
 
 
 

@@ -19,7 +19,7 @@ import com.zs.common.core.constant.Constants;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.page.PageResult;
 import com.zs.gen.config.DataBaseProperties;
-import com.zs.gen.config.GenConfig;
+import com.zs.gen.config.GenConfigProperties;
 import com.zs.gen.domain.entity.GenTable;
 import com.zs.gen.domain.entity.GenTableColumn;
 import com.zs.gen.domain.model.TreeNode;
@@ -35,6 +35,7 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,6 +45,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -62,7 +64,7 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     @Resource
     private IGenTableColumnService iGenTableColumnService;
     @Resource
-    private GenConfig genConfig;
+    private GenConfigProperties genConfigProperties;
 
     String outputDir = "D:\\gen"; // 建议改为配置项
 
@@ -113,29 +115,43 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     @Override
     public void importTableSave(List<String> tables) {
 
-        List<GenTable> genTableList = this.baseMapper.selectList(new LambdaQueryWrapper<GenTable>().in(GenTable::getTableName, tables));
-        if (!genTableList.isEmpty()) {
-            throw new ZsException("导入失败，存在重复的表名");
+        if (CollectionUtils.isEmpty(tables)) {
+            return;
+        }
+
+        List<GenTable> existingTables = this.baseMapper.selectList(new LambdaQueryWrapper<GenTable>().in(GenTable::getTableName, tables));
+        if (!existingTables.isEmpty()) {
+            Set<String> existingNames = existingTables.stream().map(GenTable::getTableName).collect(Collectors.toSet());
+            throw new ZsException("导入失败，以下表名已存在：" + existingNames);
         }
 
         // 查询表信息
         List<GenTable> tableList = this.baseMapper.selectTableListByNames(tables);
+
         for (GenTable table : tableList) {
-            String tableName = table.getTableName();
-            table.setClassName(StrUtil.upperFirst(StrUtil.toCamelCase(tableName)));
+            processAndSaveTable(table);
+        }
+    }
 
+    /**
+     * 处理单个表：初始化、保存表及列信息
+     */
+    private void processAndSaveTable(GenTable table) {
+        String tableName = table.getTableName();
+        table.setClassName(tableName);
 
-            GenUtils.initTable(table, genConfig);
-            this.baseMapper.insert(table);
+        GenUtils.initTable(table, genConfigProperties);
+        this.baseMapper.insert(table);
 
-            // 保存列信息
-            List<GenTableColumn> genTableColumns = iGenTableColumnService.selectTableColumnsByName(tableName);
-            for (GenTableColumn column : genTableColumns) {
+        // 查询并保存列
+        List<GenTableColumn> columns = iGenTableColumnService.selectTableColumnsByName(tableName);
+        if (columns != null && !columns.isEmpty()){
+            for (GenTableColumn column : columns) {
+                // 初始化列信息
                 GenUtils.initColumnField(column, table);
                 column.setTableId(table.getTableId());
                 iGenTableColumnService.save(column);
             }
-
         }
     }
 
