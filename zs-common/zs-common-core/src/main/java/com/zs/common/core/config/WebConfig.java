@@ -29,8 +29,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * @author zs
  */
-@Configuration
+@Configuration()
 @Slf4j
 public class WebConfig implements WebMvcConfigurer {
 

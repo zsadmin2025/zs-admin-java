@@ -42,6 +42,11 @@ public enum HttpEnum {
      */
     INTERNAL_SERVER_ERROR(500, "系统内部错误"),
 
+    /**
+     * 数据库SQL执行错误
+     */
+    DATABASE_SQL_ERROR(600, "数据库SQL执行错误"),
+
     VALIDATE_ERROR(1002, "参数校验失败"),
 
     SUB_DEPT_ERROR(1003, "请先删除子级部门");
