@@ -136,6 +136,11 @@ public class SysDictDataServiceImpl extends ServiceImpl<SysDictDataMapper, SysDi
         saveCache();
     }
 
+    @Override
+    public boolean countByDictId(Long sysDictTypeId) {
+        return baseMapper.selectCount(new LambdaQueryWrapper<SysDictDataEntity>().eq(SysDictDataEntity::getSysDictTypeId, sysDictTypeId)) > 0;
+    }
+
     @PostConstruct
     public void saveCache() {
         List<SysDictDataEntity> sysDictDataEntityList = baseMapper.selectList(new QueryWrapper<SysDictDataEntity>().eq("status", 1));

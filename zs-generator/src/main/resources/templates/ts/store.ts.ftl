@@ -1,4 +1,4 @@
-import { ${className}Api } from '@/api/${moduleName}/${businessName}';
+import { ${className}Api } from '@/api/${moduleName}/${businessName}/${businessName}';
 import { ref } from 'vue';
 import { defineStore } from 'pinia';
 import { ${BusinessName}State, ${BusinessName} } from '@/types/${moduleName}/${businessName}/${businessName}Types';
@@ -19,13 +19,13 @@ export const use${BusinessName}Store = defineStore('${businessName}', {
       ${column.javaField!}: '',
       </#if>
       <#if column.javaType == 'Integer'>
-      ${column.javaField!}: 1,
+      ${column.javaField!}: undefined,
       </#if>
       <#if column.javaType == 'Long'>
       ${column.javaField!}: '',
       </#if>
       <#if column.javaType == 'Date'>
-      ${column.javaField!}: new Date(),
+      ${column.javaField!}: null,
       </#if>
       <#if column.javaType == 'Double'>
       ${column.javaField!}: 0.0,

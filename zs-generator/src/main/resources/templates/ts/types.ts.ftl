@@ -39,17 +39,17 @@ export interface ${BusinessName}ListRes extends ResponseData {
 
 export interface ${BusinessName}AddOrEditForm {
 <#list columnList as column>
-<#if column.isInsert == '1'>
+<#if (column.isPk == '1' || column.isInsert == '1')>
   <#if column.javaType == 'String'>
-  ${column.javaField!}: string;
+  ${column.javaField!}<#if column.isRequired != '1'>?</#if>: string;
   <#elseif column.javaType == 'Integer'>
-  ${column.javaField!}: number;
+  ${column.javaField!}<#if column.isRequired != '1'>?</#if>: number;
   <#elseif column.javaType == 'Long'>
-  ${column.javaField!}: string;
+  ${column.javaField!}<#if column.isRequired != '1'>?</#if>: string;
   <#elseif column.javaType == 'Boolean'>
-  ${column.javaField!}: boolean;
+  ${column.javaField!}<#if column.isRequired != '1'>?</#if>: boolean;
   <#else>
-  ${column.javaField!}: any;
+  ${column.javaField!}<#if column.isRequired != '1'>?</#if>: any;
   </#if>
 </#if>
 </#list>

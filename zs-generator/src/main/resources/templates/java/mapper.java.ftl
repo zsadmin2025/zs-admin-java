@@ -1,6 +1,6 @@
 package ${packageName}.${moduleName}.${businessName}.mapper;
 
-import com.zs.common.core.base.DataPermissionMapper;
+import com.zs.common.mp.base.DataPermissionMapper;
 import ${packageName}.${moduleName}.${businessName}.domain.entity.${ClassName}Entity;
 import org.apache.ibatis.annotations.Mapper;
 
@@ -10,7 +10,7 @@ import org.apache.ibatis.annotations.Mapper;
  * </p>
  *
  * @author ${author}
- * @since ${date}
+ * {@code @date} ${date}
  */
 @Mapper
 public interface ${ClassName}Mapper extends DataPermissionMapper<${ClassName}Entity> {

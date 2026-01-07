@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.page.PageInfo;
 import com.zs.common.core.page.PageResult;
 import com.zs.sys.dict.domain.entity.SysDictTypeEntity;
@@ -12,8 +13,10 @@ import com.zs.sys.dict.domain.params.SysDictTypeAddParams;
 import com.zs.sys.dict.domain.params.SysDictTypeQueryParams;
 import com.zs.sys.dict.domain.vo.SysDictTypeVO;
 import com.zs.sys.dict.mapper.SysDictTypeMapper;
+import com.zs.sys.dict.service.ISysDictDataService;
 import com.zs.sys.dict.service.ISysDictTypeService;
 import jakarta.annotation.Nullable;
+import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
 import org.apache.logging.log4j.util.Strings;
 import org.springframework.stereotype.Service;
@@ -26,6 +29,8 @@ import java.util.List;
 @Service
 public class SysDictTypeServiceImpl extends ServiceImpl<SysDictTypeMapper, SysDictTypeEntity> implements ISysDictTypeService {
 
+    @Resource
+    private ISysDictDataService iSysDictDataService;
 
     @NotNull
     @Override
@@ -65,9 +70,13 @@ public class SysDictTypeServiceImpl extends ServiceImpl<SysDictTypeMapper, SysDi
     }
 
     @Override
-    public void deleteById(Long id) {
+    public void deleteById(Long sysDictTypeId) {
 
-        baseMapper.deleteById(id);
+        // 检查是否存在字典子项
+        if (iSysDictDataService.countByDictId(sysDictTypeId)) {
+            throw new ZsException("存在字典子项，不允许删除，请先删除子项。");
+        }
+        baseMapper.deleteById(sysDictTypeId);
     }
 
 

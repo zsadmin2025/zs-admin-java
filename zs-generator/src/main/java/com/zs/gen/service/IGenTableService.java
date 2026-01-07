@@ -15,7 +15,7 @@ import java.util.List;
 /**
  * 业务 服务层
  * 
- * @author ruoyi
+ * @author zs
  */
 public interface IGenTableService extends IService<GenTable>{
 

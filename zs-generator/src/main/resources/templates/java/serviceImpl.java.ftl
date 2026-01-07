@@ -13,11 +13,12 @@ import ${packageName}.${moduleName}.${businessName}.domain.params.${ClassName}Se
 import ${packageName}.${moduleName}.${businessName}.domain.params.${ClassName}AddParams;
 import ${packageName}.${moduleName}.${businessName}.domain.params.${ClassName}UpdateParams;
 import cn.hutool.core.bean.BeanUtil;
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
+import cn.hutool.core.util.ObjectUtil;
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,17 +29,36 @@ import java.util.List;
  * </p>
  *
  * @author ${author}
- * @since ${date}
+ * {@code @date} ${date}
  */
 @Service
 public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${ClassName}Entity> implements ${ClassName}Service {
 
         @Override
         public PageResult<${ClassName}VO> page(@NotNull ${ClassName}PageQueryParams ${className}PageQueryParams) {
-
             Page<${ClassName}Entity> page = new PageInfo<>(${className}PageQueryParams);
-            QueryWrapper<${ClassName}Entity> wrapper = new QueryWrapper<>();
-
+            LambdaQueryWrapper<${ClassName}Entity> wrapper = new LambdaQueryWrapper<>();
+<#list columnList as column>
+<#if column.isQuery == '1'>
+    <#if column.queryType == 'EQ'>
+            wrapper.eq(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'NE'>
+            wrapper.ne(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'GT'>
+            wrapper.gt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'LT'>
+            wrapper.lt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'GTE'>
+            wrapper.ge(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'LTE'>
+            wrapper.le(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'LIKE'>
+            wrapper.like(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'BETWEEN'>
+            wrapper.between(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}Start()) && ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}End()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}Start(), ${className}PageQueryParams.get${column.javaField?cap_first}End());
+    </#if>
+</#if>
+</#list>
             IPage<${ClassName}Entity> iPage = baseMapper.selectPage(page, wrapper);
             List<${ClassName}VO> list = BeanUtil.copyToList(iPage.getRecords(), ${ClassName}VO.class);
 
@@ -47,7 +67,28 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
 
         @Override
         public List<${ClassName}VO> getList(@NotNull ${ClassName}SelectQueryParams ${className}SelectQueryParams) {
-            QueryWrapper<${ClassName}Entity> wrapper = new QueryWrapper<>();
+            LambdaQueryWrapper<${ClassName}Entity> wrapper = new LambdaQueryWrapper<>();
+<#list columnList as column>
+<#if column.isQuery == '1'>
+    <#if column.queryType == 'EQ'>
+            wrapper.eq(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'NE'>
+            wrapper.ne(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'GT'>
+            wrapper.gt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'LT'>
+            wrapper.lt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'GTE'>
+            wrapper.ge(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'LTE'>
+            wrapper.le(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'LIKE'>
+            wrapper.like(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+    <#elseif column.queryType == 'BETWEEN'>
+            wrapper.between(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}Start()) && ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}End()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}Start(), ${className}PageQueryParams.get${column.javaField?cap_first}End());
+    </#if>
+</#if>
+</#list>
             return BeanUtil.copyToList(baseMapper.selectList(wrapper), ${ClassName}VO.class);
         }
 

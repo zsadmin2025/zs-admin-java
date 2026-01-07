@@ -54,12 +54,26 @@ public class GenConstants {
             "decimal", "numeric", "float", "real", "double", // SQL Server
             "decimal", "numeric", "float", "real", "double precision" // PostgreSQL
     };
-    
+
+    /** 数据库日期类型（所有数据库） */
+    public static final String[] COLUMN_TYPE_ALL_DATE = { "date", // MySQL
+            "date", // Oracle/达梦
+            "date", // SQL Server
+            "date" // PostgreSQL
+    };
+
     /** 数据库日期时间类型（所有数据库） */
-    public static final String[] COLUMN_TYPE_ALL_DATETIME = { "date", "datetime", "timestamp", "time", // MySQL
-            "date", "timestamp", "timestamp with time zone", "time", // Oracle/达梦
-            "date", "datetime", "smalldatetime", "datetime2", "datetimeoffset", "time", "timestamp", // SQL Server
-            "date", "timestamp", "timestamp with time zone", "time", "time with time zone" // PostgreSQL
+    public static final String[] COLUMN_TYPE_ALL_DATETIME = { "datetime", "timestamp", // MySQL
+            "timestamp", "timestamp with time zone", // Oracle/达梦
+            "datetime", "smalldatetime", "datetime2", "datetimeoffset", "timestamp", // SQL Server
+            "timestamp", "timestamp with time zone" // PostgreSQL
+    };
+
+    /** 数据库时间类型（所有数据库） */
+    public static final String[] COLUMN_TYPE_ALL_TIME = { "time", // MySQL
+            "time", // Oracle/达梦
+            "time", "datetimeoffset", // SQL Server
+            "time", "time with time zone" // PostgreSQL
     };
     
     /** 数据库布尔类型（所有数据库） */
@@ -81,9 +95,14 @@ public class GenConstants {
     /** 页面不需要查询字段 */
     public static final String[] COLUMN_NAME_NOT_QUERY = { "creator", "create_time", "updater", "update_time", "creator_dept", "tenant_id" };
 
-
+    /** 忽略不需要的字段 */
+    public static final String[] COLUMN_NAME_NOT_IN_ENTITY = { "creator", "create_time", "updater", "update_time", "creator_dept", "tenant_id" };
+  
     /** 文本框 */
     public static final String HTML_INPUT = "input";
+
+    /** 数字类型 */
+    public static final String HTML_NUMBER = "number";
 
     /** 文本域 */
     public static final String HTML_TEXTAREA = "textarea";
@@ -98,7 +117,13 @@ public class GenConstants {
     public static final String HTML_CHECKBOX = "checkbox";
 
     /** 日期控件 */
+    public static final String HTML_DATE = "date";
+
+    /** 日期时间控件 */
     public static final String HTML_DATETIME = "datetime";
+
+    /** 时间控件 */
+    public static final String HTML_TIME = "time";
 
     /** 图片上传控件 */
     public static final String HTML_IMAGE_UPLOAD = "imageUpload";
@@ -108,6 +133,12 @@ public class GenConstants {
 
     /** 富文本控件 */
     public static final String HTML_EDITOR = "editor";
+
+
+
+
+
+
 
     /** 字符串类型 */
     public static final String TYPE_STRING = "String";
@@ -141,4 +172,6 @@ public class GenConstants {
 
     /** 主键 */
     public static final String IS_PK = "1";
+
+  
 }

@@ -78,6 +78,9 @@ public final class GenUtils {
         if (!Arrays.asList(GenConstants.COLUMN_NAME_NOT_QUERY).contains(columnName)){
             column.setIsQuery(GenConstants.REQUIRE);
         }
+
+        column.setIsExport(GenConstants.REQUIRE);
+
    
 
         // 3. 解析数据库类型，设置Java类型和HTML类型
@@ -98,6 +101,7 @@ public final class GenUtils {
         // 整数类型
         else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_INTEGER).contains(lowerDbType)) {
             column.setJavaType(GenConstants.TYPE_INTEGER);
+            column.setHtmlType(GenConstants.HTML_NUMBER);
         }
         // 长整数类型
         else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_LONG).contains(lowerDbType)) {
@@ -106,11 +110,22 @@ public final class GenUtils {
         // 浮点类型
         else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_DECIMAL).contains(lowerDbType)) {
             column.setJavaType(GenConstants.TYPE_BIG_DECIMAL);
+            column.setHtmlType(GenConstants.HTML_NUMBER);
+        }
+        // 日期类型 //
+        else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_DATE).contains(lowerDbType)) {
+            column.setJavaType(GenConstants.TYPE_DATE);
+            column.setHtmlType(GenConstants.HTML_DATE);
         }
         // 日期时间类型
         else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_DATETIME).contains(lowerDbType)) {
             column.setJavaType(GenConstants.TYPE_DATE);
             column.setHtmlType(GenConstants.HTML_DATETIME);
+        }
+        // 时间类型
+        else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_TIME).contains(lowerDbType)) {
+            column.setJavaType(GenConstants.TYPE_DATE);
+            column.setHtmlType(GenConstants.HTML_TIME);
         }
         // 布尔类型
         else if (Arrays.asList(GenConstants.COLUMN_TYPE_ALL_BOOLEAN).contains(lowerDbType)) {

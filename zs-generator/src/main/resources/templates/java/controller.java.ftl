@@ -28,7 +28,7 @@ import java.util.List;
  * </p>
  *
  * @author ${author}
- * @since ${date}
+ * {@code @date} ${date}
  */
 @RestController
 @RequestMapping("/${moduleName}/${businessName}")
@@ -55,7 +55,7 @@ public class ${ClassName}Controller {
     @PostMapping("save")
     @PreAuthorize("hasAuthority('${moduleName}:${businessName}:save')")
     public Result<?> save(@RequestBody ${ClassName}AddParams ${className}AddParams) {
-				${className}Service.save(${className}AddParams);
+        ${className}Service.save(${className}AddParams);
         return new Result<>().ok();
     }
 
@@ -63,7 +63,7 @@ public class ${ClassName}Controller {
     @PutMapping("update")
     @PreAuthorize("hasAuthority('${moduleName}:${businessName}:update')")
     public Result<?> update(@RequestBody ${ClassName}UpdateParams ${className}UpdateParams) {
-				${className}Service.update(${className}UpdateParams);
+        ${className}Service.update(${className}UpdateParams);
         return new Result<>().ok();
     }
 
@@ -71,7 +71,7 @@ public class ${ClassName}Controller {
     @GetMapping("{id}")
     @PreAuthorize("hasAuthority('${moduleName}:${businessName}:info')")
     public Result<${ClassName}VO> get(@PathVariable("id") Long id) {
-				${ClassName}VO ${className}VO = ${className}Service.getById(id);
+        ${ClassName}VO ${className}VO = ${className}Service.getById(id);
         return new Result<${ClassName}VO>().ok(${className}VO);
     }
 
@@ -80,7 +80,7 @@ public class ${ClassName}Controller {
     @DeleteMapping("{id}")
     @PreAuthorize("hasAuthority('${moduleName}:${businessName}:delete')")
     public Result<?> delete(@PathVariable("id") Long id) {
-				${className}Service.deleteById(id);
+        ${className}Service.deleteById(id);
         return new Result<>().ok();
     }
 
@@ -88,7 +88,7 @@ public class ${ClassName}Controller {
     @DeleteMapping
     @PreAuthorize("hasAuthority('${moduleName}:${businessName}:batchDelete')")
     public Result<?> batchDelete(@RequestBody Long[] ids) {
-				${className}Service.batchDelById(ids);
+        ${className}Service.batchDelById(ids);
         return new Result<>().ok();
     }
     @Log(module = "${functionName}-导出", type = OperationTypeEnum.EXPORT, description = "导出${functionName}信息")

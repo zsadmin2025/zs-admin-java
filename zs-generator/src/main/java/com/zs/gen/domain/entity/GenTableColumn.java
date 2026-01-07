@@ -37,6 +37,7 @@ public class GenTableColumn extends BaseEntity {
     @Size(max = 50, message = "列名称长度不能超过50个字符")
     private String columnName;
 
+
     /**
      * 列描述
      */
@@ -49,6 +50,11 @@ public class GenTableColumn extends BaseEntity {
     @NotBlank(message = "列类型不能为空")
     @Size(max = 50, message = "列类型长度不能超过50个字符")
     private String columnType;
+
+    /**
+     *  列长度
+     */
+    private Long columnLength;
 
     /**
      * Java类型
@@ -67,37 +73,50 @@ public class GenTableColumn extends BaseEntity {
     /**
      * 是否主键（Y是 N否）
      */
+    @Size(max = 1, message = "是否主键长度不能超过1个字符")
     private String isPk;
 
     /**
      * 是否自增（Y是 N否）
      */
+    @Size(max = 1, message = "是否自增长度不能超过1个字符")
     private String isIncrement;
 
     /**
      * 是否必填（Y是 N否）
      */
+    @Size(max = 1, message = "是否必填长度不能超过1个字符")
     private String isRequired;
 
     /**
      * 是否为插入字段（Y是 N否）
      */
+    @Size(max = 1, message = "是否插入长度不能超过1个字符")
     private String isInsert;
 
     /**
      * 是否编辑字段（Y是 N否）
      */
+    @Size(max = 1, message = "是否编辑长度不能超过1个字符")
     private String isEdit;
 
     /**
      * 是否列表字段（Y是 N否）
      */
+    @Size(max = 1, message = "是否列表长度不能超过1个字符")
     private String isList;
 
     /**
      * 是否查询字段（Y是 N否）
      */
+    @Size(max = 1, message = "是否查询长度不能超过1个字符")
     private String isQuery;
+
+    /**
+     * 是否导出字段（Y是 N否）
+     */
+    @Size(max = 1, message = "是否导出长度不能超过1个字符")
+    private String isExport;
 
     /**
      * 查询方式（EQ等于、NE不等于、GT大于、LT小于、LIKE模糊、BETWEEN范围）

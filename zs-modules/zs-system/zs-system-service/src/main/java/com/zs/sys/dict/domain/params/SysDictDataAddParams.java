@@ -11,9 +11,6 @@ import lombok.Data;
 @Data
 public class SysDictDataAddParams {
 
-    @Schema(description = "字典数据id")
-    @NotNull(message = "字典数据id不能为空")
-    private Long sysDictDataId;
 
     @Schema(description = "字典类型")
     @NotNull(message = "字典类型不能为空")

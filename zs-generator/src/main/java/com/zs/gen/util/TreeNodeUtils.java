@@ -10,25 +10,42 @@ import java.util.Map;
 public class TreeNodeUtils {
 
 
-    public static List<TreeNode> buildAntdTree(Map<String, String> fileMap, String businessName) {
+    public static List<TreeNode> buildAntdTree(Map<String, String> fileMap, String businessName, String packageName, String moduleName) {
         TreeNode root = new TreeNode("root", "", ""); // 根节点无值
 
         int keyCounter = 0;
         Map<String, TreeNode> pathToNode = new HashMap<>();
         pathToNode.put("", root);
 
-        for (String filename : fileMap.keySet()) {
+        // 将包名转换为路径格式，并设置默认值
+        String packagePath = (packageName != null && !packageName.isEmpty()) ? packageName.replace(".", "/") : "com/zs";
+        // 设置默认模块名
+        String modulePath = (moduleName != null && !moduleName.isEmpty()) ? moduleName : "sys";
+
+        // 遍历文件映射，获取实际文件名和内容
+        for (Map.Entry<String, String> entry : fileMap.entrySet()) {
+            String actualFilename = entry.getKey();
+            String fileContent = entry.getValue();
+            
             String fullPath;
-            if (filename.endsWith(".java")) {
-                fullPath = getJavaPath(filename, businessName);
-            } else if (filename.endsWith(".xml")) {
-                fullPath = "java/mapper/xml/" + filename;
-            } else if (filename.endsWith(".sql")) {
-                fullPath = "java/sql/" + filename;
-            } else if (filename.endsWith(".vue")) {
-                fullPath = "vue/views/" + businessName +"/" + filename;
-            } else if (filename.endsWith(".ts")) {
-                fullPath = getTsPath(filename, businessName);
+            if (actualFilename.endsWith(".java")) {
+                // 后端：java/com/zs/模块名/业务名/具体目录/文件名
+                // 例如：java/com/zs/sys/demo/controller/DemoController.java
+                String subPath = getJavaSubPath(actualFilename);
+                // subPath 是 controller/DemoController.java，不需要再拆分
+                fullPath = "java/" + packagePath + "/" + modulePath + "/" + businessName + "/" + subPath;
+            } else if (actualFilename.endsWith(".xml")) {
+                // 后端：java/com/zs/模块名/业务名/mapper/xml/文件名
+                fullPath = "java/" + packagePath + "/" + modulePath + "/" + businessName + "/mapper/xml/" + actualFilename;
+            } else if (actualFilename.endsWith(".sql")) {
+                // 后端：java/com/zs/模块名/业务名/sql/文件名
+                fullPath = "java/" + packagePath + "/" + modulePath + "/" + businessName + "/sql/" + actualFilename;
+            } else if (actualFilename.endsWith(".vue")) {
+                // 前端：vue/业务名/views/文件名
+                fullPath = "vue/" + businessName + "/views/" + actualFilename;
+            } else if (actualFilename.endsWith(".ts")) {
+                // 前端：vue/业务名/具体目录/文件名
+                fullPath = "vue/" + businessName + "/" + getTsSubPath(actualFilename, businessName);
             } else {
                 continue;
             }
@@ -48,8 +65,8 @@ public class TreeNodeUtils {
                             ? String.valueOf(keyCounter++)
                             : pathToNode.get(parentPathStr).getKey() + "-" + pathToNode.get(parentPathStr).getChildren().size();
 
-                    // ⭐ 关键修改：只有最后一层（文件）才赋予 fileMap 中的值
-                    String value = isLast ? fileMap.get(filename) : "";
+                    // 只有最后一层（文件）才赋予 fileMap 中的值
+                    String value = isLast ? fileContent : "";
 
                     TreeNode node = new TreeNode(part, key, value);
                     current.getChildren().add(node);
@@ -64,37 +81,51 @@ public class TreeNodeUtils {
         return root.getChildren();
     }
 
-    private static String getJavaPath(String filename, String businessName) {
+    // 获取Java文件的子路径，例如controller/FileNameController.java
+    private static String getJavaSubPath(String filename) {
         if (filename.contains("Controller")) {
-            return "java/controller/" + filename;
+            return "controller/" + filename;
         } else if (filename.contains("ServiceImpl")) {
-            return "java/service/impl/" + filename;
+            return "service/impl/" + filename;
         } else if (filename.contains("Service")) {
-            return "java/service/" + filename;
+            return "service/" + filename;
         } else if (filename.contains("Mapper") && !filename.endsWith("Mapper.xml")) {
-            return "java/mapper/" + filename;
+            return "mapper/" + filename;
         } else if (filename.contains("Entity")) {
-            return "java/domain/entity/" + filename;
+            return "domain/entity/" + filename;
         } else if (filename.contains("VO")) {
-            return "java/domain/vo/" + filename;
+            return "domain/vo/" + filename;
         } else if (filename.contains("Params")) {
-            return "java/domain/params/" + filename;
+            return "domain/params/" + filename;
         } else if (filename.contains("Excel")) {
-            return "java/domain/excel/" + filename;
+            return "domain/excel/" + filename;
         } else {
-            return "java/other/"  + businessName + "/" + filename;
+            return "other/" + filename;
+        }
+    }
+    
+    // 获取TS文件的子路径，例如api/filename.ts或store/demo/filename.ts
+    private static String getTsSubPath(String filename, String businessName) {
+        if (filename.contains("Store")) {
+            return "store/" + businessName + "/" + filename;
+        } else if (filename.endsWith("Types.ts")) {
+            return "types/" + businessName + "/" + filename;
+        } else {
+            return "api/" + filename;
         }
     }
 
+    // 保留原有方法，避免编译错误
+    private static String getJavaPath(String filename, String packagePath, String moduleName, String businessName) {
+        // 使用默认模块名
+        String modulePath = (moduleName != null && !moduleName.isEmpty()) ? moduleName : "sys";
+        String basePath = "java/" + packagePath + "/" + modulePath + "/" + businessName + "/";
+        
+        return basePath + getJavaSubPath(filename);
+    }
+
+    // 保留原有方法，避免编译错误
     private static String getTsPath(String filename, String businessName) {
-        if (filename.equals("api.ts")) {
-            return "vue/api/" + filename;
-        } else if (filename.contains("Store")) {
-            return "vue/store/"  + businessName + "/" + filename;
-        } else if (filename.endsWith("Types.ts")) {
-            return "vue/types/" + businessName + "/" + filename;
-        } else {
-            return "vue/api/"  + businessName + "/" + filename;
-        }
+        return "vue/" + getTsSubPath(filename, businessName);
     }
 }
