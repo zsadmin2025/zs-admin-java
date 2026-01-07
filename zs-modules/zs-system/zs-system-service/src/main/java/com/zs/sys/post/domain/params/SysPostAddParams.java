@@ -1,6 +1,7 @@
 package com.zs.sys.post.domain.params;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
 /**
@@ -11,6 +12,7 @@ import lombok.Data;
 public class SysPostAddParams {
 
     @Schema(description = "岗位ID")
+    @NotBlank(message = "岗位ID不能为空")
     private Long sysPostId;
 
     @Schema(description = "岗位名称")

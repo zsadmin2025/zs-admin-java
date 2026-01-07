@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { ${className}Api } from '@/api/${moduleName}/${businessName}';
+import { ${className}Api } from '@/api/${moduleName}/${businessName}/${businessName}';
 import { ${BusinessName}AddOrEditState } from '@/types/${moduleName}/${businessName}/${businessName}Types';
 import { Message } from '@arco-design/web-vue';
 
@@ -11,18 +11,24 @@ export const use${BusinessName}AddOrEditStore = defineStore('${className}AddOrEd
       formRef: ref(null),
       form: {
       <#list columnList as column>
+      <#if column.isPk == '1'>
+        ${column.javaField!}: '',
+      </#if>
       <#if column.isInsert == '1'>
         <#if column.javaType == 'String'>
         ${column.javaField!}: '',
         </#if>
+        <#if column.javaType == 'BigDecimal'>
+        ${column.javaField!}: 0,
+        </#if>
         <#if column.javaType == 'Integer'>
-        ${column.javaField!}: 1,
+        ${column.javaField!}: null,
         </#if>
         <#if column.javaType == 'Long'>
         ${column.javaField!}: '',
         </#if>
         <#if column.javaType == 'Date'>
-        ${column.javaField!}: new Date(),
+        ${column.javaField!}: null,
         </#if>
         <#if column.javaType == 'Double'>
         ${column.javaField!}: 0.0,
