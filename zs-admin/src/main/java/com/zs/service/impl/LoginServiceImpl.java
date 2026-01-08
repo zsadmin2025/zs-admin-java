@@ -27,7 +27,6 @@ import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -46,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class LoginServiceImpl implements ILoginService {
 
-
     @Resource
     private AuthenticationManager authenticationManager;
     @Resource
@@ -54,12 +52,9 @@ public class LoginServiceImpl implements ILoginService {
     @Resource
     private JwtUtil jwtUtil;
 
-
     @LoginLog
     @Override
     public Result<TokenVO> login(LoginParams loginParams, HttpServletRequest request, HttpServletResponse response) {
-
-
         // 验证码校验
         boolean isCaptcha = checkCaptcha(loginParams.getUuid(), loginParams.getCode());
         if (!isCaptcha) {
@@ -71,10 +66,7 @@ public class LoginServiceImpl implements ILoginService {
 
         try {
             Authentication authentication = authenticationManager.authenticate(token);
-
-
             TokenVO tokenVO = getTokenVO(request, authentication);
-
             return new Result<TokenVO>().ok(tokenVO);
 
         } catch (AuthenticationException e) {
@@ -85,13 +77,12 @@ public class LoginServiceImpl implements ILoginService {
         }
     }
 
-    private @NotNull TokenVO getTokenVO(HttpServletRequest request, Authentication authentication) {
+    private TokenVO getTokenVO(HttpServletRequest request, Authentication authentication) {
         LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
 
         String userAgentString = request.getHeader(HttpHeaders.USER_AGENT);
         UserAgent userAgent = UserAgentUtil.parse(userAgentString);
         String ipAddr = IpUtils.getIpAddr(request);
-
 
         SysUser sysUser = loginUserInfo.getSysUser();
         sysUser.setIp(ipAddr);
@@ -99,7 +90,6 @@ public class LoginServiceImpl implements ILoginService {
         sysUser.setLoginTime(new Date());
         sysUser.setBrowser(userAgent.getBrowser().toString());
         sysUser.setOs(userAgent.getOs().toString());
-
 
         // 保存加密的key
         saveCryptoKeyToRedis(request, loginUserInfo.getSysUser());
@@ -112,7 +102,6 @@ public class LoginServiceImpl implements ILoginService {
 
     @Override
     public Result<CodeVO> captcha(HttpServletRequest request, HttpServletResponse response) {
-
         try {
             // 设置响应内容类型
             response.setContentType("image/png;charset=UTF-8");
@@ -122,7 +111,6 @@ public class LoginServiceImpl implements ILoginService {
             response.setDateHeader("Expires", 0);
 
             LineCaptcha captcha = CaptchaUtil.createLineCaptcha(100, 45, 1, 1);
-//            captcha.setBackground(new Color(249, 251, 220));
             RandomGenerator generator = new RandomGenerator("0123456789", 4);
             // 自定义验证码内容为四则运算方式
             captcha.setGenerator(generator);
@@ -161,14 +149,13 @@ public class LoginServiceImpl implements ILoginService {
             }
 
             // 如果验证码不区分大小写，使用equalsIgnoreCase；否则使用equals
-            return captcha.equals(code); // 假设验证码区分大小写
+            return captcha.equalsIgnoreCase(code); // 验证码不区分大小写
 
         } catch (Exception e) {
             log.error("Error checking captcha for UUID: {}", uuid, e);
             return false;
         }
     }
-
 
     private void saveCryptoKeyToRedis(HttpServletRequest request, SysUser sysUser) {
         String cryptoKey = request.getHeader("cryptoKey");
@@ -178,6 +165,4 @@ public class LoginServiceImpl implements ILoginService {
         String decryptedKey = CryptoUtil.sm2Decrypt(cryptoKey).replace("\"", "");
         redisUtil.setObject(RedisConstants.SM4_KEY + sysUser.getSysUserId(), decryptedKey);
     }
-
-
 }

@@ -10,22 +10,37 @@ import lombok.Setter;
 import io.swagger.v3.oas.annotations.media.Schema;
 import java.util.Date;
 
+<#-- 定义需要忽略的字段集合 -->
+<#assign ignoredFields = ["creator", "createTime", "updater", "updateTime", "creatorDept", "tenantId"]>
+
+<#assign hasBigDecimalField = false>
+<#list columnList as column>
+  <#if !ignoredFields?seq_contains(column.javaField)>
+    <#if column.javaType == 'Date'>
+      <#assign hasDateField = true>
+    </#if>
+    <#if column.javaType == 'BigDecimal'>
+      <#assign hasBigDecimalField = true>
+    </#if>
+  </#if>
+</#list>
+<#if hasBigDecimalField>
+import java.math.BigDecimal;
+</#if>
+
 /**
  * <p>
  * ${table.comment!}
  * </p>
  *
  * @author ${author}
- * @since ${date}
+ * {@code @date} ${date}
  */
 @Getter
 @Setter
 @TableName("${tableName!}")
 @Schema(description = "${functionName}Entity对象")
 public class ${ClassName}Entity extends BaseEntity {
-
-<#-- 定义需要忽略的字段集合 -->
-<#assign ignoredFields = ["creator", "createTime", "updater", "updateTime"]>
 
 <#-- ----------  BEGIN 字段循环遍历  ---------->
 <#list columnList as column>
@@ -39,7 +54,4 @@ public class ${ClassName}Entity extends BaseEntity {
   </#if>
 </#list>
 <#------------  END 字段循环遍历  ---------->
-
-
-
 }

@@ -1,6 +1,6 @@
 -- 菜单sql --
 INSERT INTO `sys_menu` (`pid`,`title`,`path`,`type`,`name`,`component`,`icon`,`link`,`requires_auth`,`hide_in_menu`,`hide_children_in_menu`,`active_menu`,`visible`,`sort`,`no_affix`,`ignore_cache`,`permissions`,`status`,`creator`,`create_time`,`updater`,`update_time`)
-VALUES ('${parentMenuId?c}', '${functionName}','/${moduleName}/${businessName}',1,'${moduleName}/${businessName}','Layout','system',NULL,1,0,0,NULL,1,1,0,0,'',1,1633833655917559809,sysdate(),'',null);
+VALUES ('${parentMenuId?c}', '${functionName}','/${moduleName}/${businessName}',2,'${moduleName}/${businessName}','/${moduleName}/${businessName}/index','icon-outlined-file-text',NULL,1,0,0,NULL,1,1,0,0,'',1,1633833655917559809,sysdate(),null,null);
 
 -- 保存最后插入的 ID
 SET @last_menu_id = LAST_INSERT_ID();

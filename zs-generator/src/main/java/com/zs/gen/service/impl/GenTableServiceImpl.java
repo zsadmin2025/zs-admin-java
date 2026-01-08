@@ -19,7 +19,8 @@ import com.zs.common.core.constant.Constants;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.page.PageResult;
 import com.zs.gen.config.DataBaseProperties;
-import com.zs.gen.config.GenConfig;
+import com.zs.gen.config.GenConfigProperties;
+import com.zs.gen.constants.GenConstants;
 import com.zs.gen.domain.entity.GenTable;
 import com.zs.gen.domain.entity.GenTableColumn;
 import com.zs.gen.domain.model.TreeNode;
@@ -35,8 +36,10 @@ import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -44,6 +47,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -51,7 +55,7 @@ import java.util.zip.ZipOutputStream;
 /**
  * 业务 服务层实现
  *
- * @author ruoyi
+ * @author zs
  */
 @Service
 @Slf4j
@@ -62,9 +66,7 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     @Resource
     private IGenTableColumnService iGenTableColumnService;
     @Resource
-    private GenConfig genConfig;
-
-    String outputDir = "D:\\gen"; // 建议改为配置项
+    private GenConfigProperties genConfigProperties;
 
     @Override
     public PageResult<GenTableVO> page(GenTablePageQueryParams genTablePageQueryParams) {
@@ -113,29 +115,43 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     @Override
     public void importTableSave(List<String> tables) {
 
-        List<GenTable> genTableList = this.baseMapper.selectList(new LambdaQueryWrapper<GenTable>().in(GenTable::getTableName, tables));
-        if (!genTableList.isEmpty()) {
-            throw new ZsException("导入失败，存在重复的表名");
+        if (CollectionUtils.isEmpty(tables)) {
+            return;
+        }
+
+        List<GenTable> existingTables = this.baseMapper.selectList(new LambdaQueryWrapper<GenTable>().in(GenTable::getTableName, tables));
+        if (!existingTables.isEmpty()) {
+            Set<String> existingNames = existingTables.stream().map(GenTable::getTableName).collect(Collectors.toSet());
+            throw new ZsException("导入失败，以下表名已存在：" + existingNames);
         }
 
         // 查询表信息
         List<GenTable> tableList = this.baseMapper.selectTableListByNames(tables);
+
         for (GenTable table : tableList) {
-            String tableName = table.getTableName();
-            table.setClassName(StrUtil.upperFirst(StrUtil.toCamelCase(tableName)));
+            processAndSaveTable(table);
+        }
+    }
 
+    /**
+     * 处理单个表：初始化、保存表及列信息
+     */
+    private void processAndSaveTable(GenTable table) {
+        String tableName = table.getTableName();
+        table.setClassName(tableName);
 
-            GenUtils.initTable(table, genConfig);
-            this.baseMapper.insert(table);
+        GenUtils.initTable(table, genConfigProperties);
+        this.baseMapper.insert(table);
 
-            // 保存列信息
-            List<GenTableColumn> genTableColumns = iGenTableColumnService.selectTableColumnsByName(tableName);
-            for (GenTableColumn column : genTableColumns) {
+        // 查询并保存列
+        List<GenTableColumn> columns = iGenTableColumnService.selectTableColumnsByName(tableName);
+        if (columns != null && !columns.isEmpty()){
+            for (GenTableColumn column : columns) {
+                // 初始化列信息
                 GenUtils.initColumnField(column, table);
                 column.setTableId(table.getTableId());
                 iGenTableColumnService.save(column);
             }
-
         }
     }
 
@@ -163,31 +179,22 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     public byte[] generateCodeZip(Long tableId) throws IOException {
 
         List<TreeNode> nodes = this.previewCode(tableId);
-        // 创建临时目录
-        Path tempDir = Files.createTempDirectory("code_gen_");
-        Path outputZip = Files.createTempFile("project_", ".zip");
-
-        try {
-
-
-            // 递归生成文件
-            createFiles(nodes, tempDir);
-
-            // 打包成 ZIP
-            zipDirectory(tempDir, outputZip);
-
-            // 返回 ZIP 资源
-            byte[] zipBytes = Files.readAllBytes(outputZip);
-
-            return zipBytes;
+        
+        // 使用ByteArrayOutputStream直接在内存中生成ZIP内容，避免使用临时文件
+        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
+             ZipOutputStream zos = new ZipOutputStream(baos)) {
+            
+            // 递归将TreeNode结构直接写入ZIP流，无需临时文件
+            writeNodesToZip(nodes, "", zos);
+            
+            // 刷新流，确保所有内容都已写入
+            zos.finish();
+            
+            // 返回ZIP字节数组
+            return baos.toByteArray();
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-
-            deleteDirectory(tempDir); // 删除临时目录
-            Files.deleteIfExists(outputZip); // 删除临时 ZIP
         }
-
     }
 
 
@@ -207,6 +214,37 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
                 String content = node.getValue() != null ? node.getValue() : "";
                 Files.createDirectories(currentPath.getParent()); // 确保父目录存在
                 Files.writeString(currentPath, content, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            }
+        }
+    }
+    
+    /**
+     * 递归将TreeNode结构写入ZIP流
+     * @param nodes 树节点列表
+     * @param parentPath ZIP内部的父路径
+     * @param zos ZIP输出流
+     * @throws IOException IO异常
+     */
+    private void writeNodesToZip(List<TreeNode> nodes, String parentPath, ZipOutputStream zos) throws IOException {
+        for (TreeNode node : nodes) {
+            String currentPath = parentPath.isEmpty() ? node.getTitle() : parentPath + "/" + node.getTitle();
+            
+            if (node.getChildren() != null && !node.getChildren().isEmpty()) {
+                // 是目录，创建空的ZIP条目
+                ZipEntry zipEntry = new ZipEntry(currentPath + "/");
+                zos.putNextEntry(zipEntry);
+                zos.closeEntry();
+                
+                // 递归处理子节点
+                writeNodesToZip(node.getChildren(), currentPath, zos);
+            } else {
+                // 是文件，写入内容
+                String content = node.getValue() != null ? node.getValue() : "";
+                
+                ZipEntry zipEntry = new ZipEntry(currentPath);
+                zos.putNextEntry(zipEntry);
+                zos.write(content.getBytes(StandardCharsets.UTF_8));
+                zos.closeEntry();
             }
         }
     }
@@ -264,7 +302,6 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     // 全局配置
     private GlobalConfig generateCodeGlobalConfig(GlobalConfig.Builder builder, GenTableVO genTable) {
         return builder.author(genTable.getFunctionAuthor())
-//                .outputDir(outputDir)
                 .disableOpenDir()
                 .enableSwagger() // 开启 swagger
                 .dateType(DateType.ONLY_DATE)
@@ -276,11 +313,12 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     private PackageConfig generateCodePackageConfig(PackageConfig.Builder builder, GenTableVO genTable) {
         return builder
                 .parent(genTable.getPackageName()) // 设置父包名
-                .moduleName(genTable.getModuleName() + "." + genTable.getBusinessName())
-                .entity("domain.entity") // 设置实体类包名
-                .mapper("mapper") // 设置 Mapper 接口包名
-                .service("service") // 设置 Service 接口包名
-                .serviceImpl("service.impl") // 设置 Service 实现类包名
+                .moduleName(genTable.getModuleName()) // 只设置模块名，业务名作为目录层级
+                .entity(genTable.getBusinessName() + ".domain.entity") // 设置实体类包名，包含业务名
+                .mapper(genTable.getBusinessName() + ".mapper") // 设置 Mapper 接口包名，包含业务名
+                .service(genTable.getBusinessName() + ".service") // 设置 Service 接口包名，包含业务名
+                .serviceImpl(genTable.getBusinessName() + ".service.impl") // 设置 Service 实现类包名，包含业务名
+                .controller(genTable.getBusinessName() + ".controller") // 设置 Controller 包名，包含业务名
                 .xml("mappers")
                 .pathInfo(Collections.singletonMap(OutputFile.xml, "/src/main/resources/mapper")) // 设置 Mapper XML 文件生成路径
                 .build();
@@ -336,6 +374,8 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
         customMap.put("parentMenuId", genTable.getParentMenuId());
         customMap.put("parentMenuName", genTable.getParentMenuName());
         customMap.put("columnList", genTable.getColumns());
+        // 传进去忽略的字段
+        customMap.put("ignoredFields", GenConstants.COLUMN_NAME_NOT_IN_ENTITY);
 
         return builder.customMap(customMap)
                 // 添加java文件
@@ -350,14 +390,14 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
                 .customFile(buildCustomFile(genTable, "sql.ftl", "templates/sql/sql.ftl", "sql"))
 
                 // Vue 文件
-                .customFile(buildVueFile(genTable, "index.vue", "templates/vue/index.vue.ftl", outputDir))
-                .customFile(buildVueFile(genTable, genTable.getBusinessName() + "-add-or-edit.vue", "templates/vue/add-or-edit.vue.ftl", outputDir))
+                .customFile(buildVueFile(genTable, "index.vue", "templates/vue/index.vue.ftl"))
+                .customFile(buildVueFile(genTable, genTable.getBusinessName() + "-add-or-edit.vue", "templates/vue/add-or-edit.vue.ftl"))
 
                 // TS 文件
-                .customFile(buildTsFile(genTable, genTable.getBusinessName() + "Store.ts", "templates/ts/store.ts.ftl", outputDir))
-                .customFile(buildTsFile(genTable, genTable.getBusinessName() + "AddOrEditStore.ts", "templates/ts/AddOrEditStore.ts.ftl", outputDir))
-                .customFile(buildTsFile(genTable, genTable.getBusinessName() + ".ts", "templates/ts/api.ts.ftl", outputDir))
-                .customFile(buildTsFile(genTable, genTable.getBusinessName() + "Types.ts", "templates/ts/types.ts.ftl", outputDir))
+                .customFile(buildTsFile(genTable, genTable.getBusinessName() + "Store.ts", "templates/ts/store.ts.ftl"))
+                .customFile(buildTsFile(genTable, genTable.getBusinessName() + "AddOrEditStore.ts", "templates/ts/AddOrEditStore.ts.ftl"))
+                .customFile(buildTsFile(genTable, genTable.getBusinessName() + ".ts", "templates/ts/api.ts.ftl"))
+                .customFile(buildTsFile(genTable, genTable.getBusinessName() + "Types.ts", "templates/ts/types.ts.ftl"))
 
                 .build();
 
@@ -376,32 +416,34 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     }
 
     // 构建 Vue 文件
-    private CustomFile buildVueFile(GenTableVO genTable, String fileName, String templatePath, String outputDir) {
+    private CustomFile buildVueFile(GenTableVO genTable, String fileName, String templatePath) {
         return new CustomFile.Builder()
                 .fileName(fileName)
                 .formatNameFunction(tableInfo -> tableInfo.getEntityName().replace(genTable.getClassName() + "Entity", ""))
                 .templatePath(templatePath)
                 .enableFileOverride()
-                .filePath(outputDir + "\\views\\" + genTable.getModuleName() + "\\" + genTable.getBusinessName() +
-                        (fileName.contains("components") ? "\\components" : ""))
+                // 使用相对路径，让 MyBatis Plus Generator 自动处理
+                .filePath("vue/" + genTable.getBusinessName() + "/views" +
+                        (fileName.contains("components") ? "/components" : ""))
                 .build();
     }
 
     // 构建 TS 文件
-    private CustomFile buildTsFile(GenTableVO genTable, String fileName, String templatePath, String outputDir) {
-        String filePath = outputDir;
+    private CustomFile buildTsFile(GenTableVO genTable, String fileName, String templatePath) {
+        String filePath = "vue/" + genTable.getBusinessName();
         if (fileName.endsWith("Store.ts") || fileName.endsWith("AddOrEditStore.ts")) {
-            filePath += "\\store\\" + genTable.getModuleName() + "\\" + genTable.getBusinessName();
+            filePath += "/store";
         } else if (fileName.endsWith(".ts") && !fileName.contains("Types")) {
-            filePath += "\\api\\" + genTable.getModuleName();
+            filePath += "/api";
         } else if (fileName.endsWith("Types.ts")) {
-            filePath += "\\types\\" + genTable.getModuleName() + "\\" + genTable.getBusinessName();
+            filePath += "/types";
         }
         return new CustomFile.Builder()
                 .fileName(fileName)
                 .formatNameFunction(tableInfo -> tableInfo.getEntityName().replace(genTable.getClassName() + "Entity", ""))
                 .templatePath(templatePath)
                 .enableFileOverride()
+                // 使用相对路径，让 MyBatis Plus Generator 自动处理
                 .filePath(filePath)
                 .build();
     }
@@ -513,7 +555,7 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
         }
 
         // 构建树形结构
-        List<TreeNode> root = TreeNodeUtils.buildAntdTree(previewResults, genTable.getBusinessName());
+        List<TreeNode> root = TreeNodeUtils.buildAntdTree(previewResults, genTable.getBusinessName(), genTable.getPackageName(), genTable.getModuleName());
 
         // 将previewResults转换成树形结构，包含：java、vue、sql等
         return root;

@@ -4,17 +4,47 @@
       <template #header>
         <a-row :gutter="16">
           <a-col :flex="1">
-            <a-form
-              :model="form"
-              :auto-label-width="true"
-              label-align="left"
-            >
+            <a-form :model="form" :auto-label-width="true" label-align="left">
               <a-row :gutter="16">
               <#list columnList as column>
                 <#if column.isQuery == '1'>
                 <a-col :span="6">
                   <a-form-item field="${column.javaField!}" label="${column.columnComment!}">
-                    <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
+                    <#if column.htmlType == 'input' || column.htmlType == ''>
+                      <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
+                    <#elseif column.htmlType == 'textarea'>
+                      <a-textarea v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" :rows="3" />
+                    <#elseif column.htmlType == 'number'>
+                      <a-input-number v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
+                    <#elseif column.htmlType == 'select'>
+                      <a-select v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
+                        <a-option v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
+                          {{ item.dictLabel }}
+                        </a-option>
+                      </a-select>
+                    <#elseif column.htmlType == 'radio'>
+                      <a-radio-group v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
+                        <a-radio v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
+                          {{ item.dictLabel }}
+                        </a-radio>
+                      </a-radio-group>
+                    <#elseif column.htmlType == 'checkbox'>
+                      <a-checkbox-group v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
+                        <a-checkbox v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
+                          {{ item.dictLabel }}
+                        </a-checkbox>
+                      </a-checkbox-group>
+                    <#elseif column.htmlType == 'date'>
+                      <a-date-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" value-format="YYYY-MM-DD" />
+                    <#elseif column.htmlType == 'datetime'>
+                      <a-date-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" value-format="YYYY-MM-DD HH:mm:ss" show-time />
+                    <#elseif column.htmlType == 'time'>
+                      <a-time-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" format="HH:mm:ss" />
+                    <#elseif column.htmlType == 'image' || column.htmlType == 'upload'>
+                      <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
+                    <#else>
+                      <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
+                    </#if>
                   </a-form-item>
                 </a-col>
                 </#if>
@@ -106,10 +136,7 @@
           :scroll="{ x: '100%', y: '100%' }"
         >
           <template #status="{ record }">
-            <span v-if="record.status === 0" class="circle fail"></span>
-            <span v-else-if="record.status === 1" class="circle pass"></span>
-            <span v-if="record.status === 0"> 禁用 </span>
-            <span v-else-if="record.status === 1"> 启用 </span>
+            <ZsStatus :value="record.status" />
           </template>
           <template #operations="{ record }">
             <a-space>
@@ -154,19 +181,36 @@
 </template>
 
 <script lang="ts" setup>
-    import {storeToRefs} from 'pinia';
-    import {computed, onMounted, reactive, ref} from 'vue';
-    import type { TableColumnData } from '@arco-design/web-vue/es/table/interface';
+  import {storeToRefs} from 'pinia';
+  import {computed, onMounted, reactive, ref} from 'vue';
+  import type { TableColumnData } from '@arco-design/web-vue/es/table/interface';
+  <#assign dictTypes = []>
+  <#list columnList as column>
+  <#if column.dictType?? && column.dictType != "" && !dictTypes?seq_contains(column.dictType)>
+    <#assign dictTypes = dictTypes + [column.dictType]>
+  </#if>
+  </#list>
+  <#if dictTypes?has_content>
+  import useDict from '@/hooks/dict';
+  import { DictData } from '@/types/sys/dict/DictData';
+  </#if>
+  import { use${businessName}Store } from '@/store/modules/${moduleName}/${businessName}/${businessName}Store';
+  import ${BusinessName}AddOrEdit from './${businessName}-add-or-edit.vue';
 
-    const ${businessName}Store = use${BusinessName}Store();
-  const { addEditRef, loading, list, total, form, selectedKeys } =
-    storeToRefs(${businessName}Store);
+  const ${businessName}Store = use${BusinessName}Store();
+  const { addEditRef, loading, list, total, form, selectedKeys } = 
+  storeToRefs(${businessName}Store);
 
   const rowSelection = reactive({
     type: 'checkbox',
     showCheckedAll: true,
   });
 
+  <#if dictTypes?has_content>
+  <#list dictTypes as dictType>
+  const ${dictType}Options = ref<DictData[]>([]);
+  </#list>
+  </#if>
 
   const columns = computed<TableColumnData[]>(() => [
     <#noparse>
@@ -179,12 +223,15 @@
     },
     </#noparse>
     <#list columnList as column>
+    <#if column.isList == '1'>
     {
       title: '${column.columnComment!}',
       dataIndex: '${column.javaField!}',
+      slotName: '${column.javaField!}',
       ellipsis: true,
       tooltip: true,
     },
+    </#if>
     </#list>
     {
       title: '操作',
@@ -201,7 +248,18 @@
     currentSize.value = size;
   };
 
+  <#if dictTypes?has_content>
+  async function loadDicts() {
+    <#list dictTypes as dictType>
+    ${dictType}Options.value = await useDict('${dictType}');
+    </#list>
+  }
+  </#if>
+
   onMounted(() => {
     ${businessName}Store.fetchData();
+    <#if dictTypes?has_content>
+    loadDicts();
+    </#if>
   });
 </script>
