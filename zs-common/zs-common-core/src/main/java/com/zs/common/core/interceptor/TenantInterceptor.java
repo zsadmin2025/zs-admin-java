@@ -4,12 +4,18 @@ import com.zs.common.core.constant.Constants;
 import com.zs.common.core.exception.ErrorCodeConstants;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.tenant.TenantContext;
+import com.zs.common.core.utils.JwtUtil;
+import io.jsonwebtoken.Claims;
+import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
+
+import java.util.Objects;
 
 /**
  * 租户拦截器，从请求头中获取租户ID并设置到上下文
@@ -18,11 +24,12 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 public class TenantInterceptor implements HandlerInterceptor {
     // 白名单路径
     private static final String[] WHITE_LIST = {
-            "/system/sys/tenant/select",
             "/auth/captcha",
+            "/auth/login",
+            "/system/sys/config/website",
+            "/system/sys/tenant/select",
             // 🔹 报表
             "/jmreport",
-
             // 🔹 接口文档
             "/doc.html",
             "/v3/api-docs",
@@ -38,6 +45,12 @@ public class TenantInterceptor implements HandlerInterceptor {
             "/actuator/"
     };
 
+    @Resource
+    private  JwtUtil jwtUtil;
+
+
+
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
@@ -51,13 +64,14 @@ public class TenantInterceptor implements HandlerInterceptor {
             return true;
         }
         // 从请求头获取租户ID
-        String tenantId = request.getHeader(Constants.TENANT_HEADER);
-        if (StringUtils.isBlank(tenantId)) {
-            tenantId = request.getParameter(Constants.TENANT_HEADER);
-        }
-        if (StringUtils.isBlank(tenantId)) {
-            throw new ZsException(ErrorCodeConstants.TENANT_NOT_EXIST);
-        }
+        String tenantId = handleRequest(request);
+//        String tenantId = request.getHeader(Constants.TENANT_HEADER);
+//        if (StringUtils.isBlank(tenantId)) {
+//            tenantId = request.getParameter(Constants.TENANT_HEADER);
+//        }
+//        if (StringUtils.isBlank(tenantId)) {
+//            throw new ZsException(ErrorCodeConstants.TENANT_NOT_EXIST);
+//        }
         TenantContext.setTenantId(tenantId);
         return true;
     }
@@ -85,6 +99,16 @@ public class TenantInterceptor implements HandlerInterceptor {
             }
         }
         return false;
+    }
+
+
+    // 伪代码：从JWT中解析租户ID
+    public String handleRequest(HttpServletRequest request) {
+        String token = request.getHeader(HttpHeaders.AUTHORIZATION).replace(Constants.TOKEN_PREFIX, "");
+        Claims claims = jwtUtil.parseToken(token); // 校验并解析token
+        // 直接获取租户ID
+
+        return Objects.requireNonNull(claims).get(Constants.TENANT_HEADER).toString();
     }
 
 }
