@@ -13,7 +13,7 @@ import com.zs.common.core.core.Result;
 import com.zs.common.core.exception.ErrorCodeConstants;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.model.LoginUserInfo;
-import com.zs.common.core.model.SysUser;
+import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.tenant.TenantContext;
 import com.zs.common.core.utils.CryptoUtil;
 import com.zs.common.core.utils.IpUtils;

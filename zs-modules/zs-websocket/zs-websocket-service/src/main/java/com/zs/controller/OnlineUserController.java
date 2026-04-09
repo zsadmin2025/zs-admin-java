@@ -1,7 +1,7 @@
 package com.zs.controller;
 
 import com.zs.common.core.core.Result;
-import com.zs.common.core.model.SysUser;
+import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.page.PageResult;
 import com.zs.model.params.OnlineUserQueryParams;
 import com.zs.service.OnlineUserService;

@@ -2,9 +2,12 @@ package com.zs.common.core.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zs.common.core.enums.UserTypeEnum;
+import com.zs.common.core.model.user.PlatformUserInfo;
+import com.zs.common.core.model.user.SysUser;
+
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,26 +20,53 @@ import java.util.stream.Collectors;
 /**
  * @author zsadmin
  */
+@Data
 public class LoginUserInfo implements UserDetails {
 
-    @Setter
-    @Getter
-    public SysUser sysUser;
+   
+    private BaseUserInfo userInfo;
 
-    @Setter
-    @Getter
     private Set<String> permissions;
 
-    @Setter
-    @Getter
     private DataPermission dataPermission;
 
 
-    public LoginUserInfo(SysUser sysUser, Set<String> permissions, DataPermission dataPermission) {
-        this.sysUser = sysUser;
+    // ==================== 构造函数 ====================
+
+    public LoginUserInfo() {
+    }
+    
+    public LoginUserInfo(BaseUserInfo userInfo, Set<String> permissions, DataPermission dataPermission) {
+        this.userInfo = userInfo;
         this.permissions = permissions;
         this.dataPermission = dataPermission;
     }
+
+    // ==================== 工厂方法 ====================
+    
+    public static LoginUserInfo ofPlatform(PlatformUserInfo user, Set<String> permissions, DataPermission dataPermission) {
+        return new LoginUserInfo(user, permissions, dataPermission);
+    }
+    
+
+
+    // ==================== 类型安全获取方法 ====================
+    
+    public UserTypeEnum getUserType() {
+        return userInfo.getUserType();
+    }
+    
+    public Long getUserId() {
+        return userInfo.getUserId();
+    }
+
+    public SysUser getPlatformUser() {
+        if (userInfo instanceof SysUser p) {
+            return p;
+        }
+        throw new IllegalStateException("当前用户不是平台端用户，实际类型: " + getUserType());
+    }
+
 
 
     @NotNull
@@ -51,19 +81,19 @@ public class LoginUserInfo implements UserDetails {
     @JsonIgnore
     @Override
     public String getPassword() {
-        return sysUser.getPassword();
+        return userInfo.getPassword();
     }
 
 
     @JsonIgnore
     @Override
     public String getUsername() {
-        return sysUser.getUsername();
+        return userInfo.getUsername();
     }
 
     @JsonIgnore
     public Long getSysUserId() {
-        return sysUser.getSysUserId();
+        return userInfo.getUserId();
     }
 
     /**
@@ -95,7 +125,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        return sysUser.getStatus() == 1;
+        return userInfo.getStatus() == 1;
     }
 
 }

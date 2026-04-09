@@ -22,23 +22,23 @@ public class SecurityUtil {
 
     public static Long getUserId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getSysUserId();
+        return ((LoginUserInfo) authentication.getPrincipal()).getUserId();
     }
 
     public static String getUsername() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getUsername();
+        return ((LoginUserInfo) authentication.getPrincipal()).getUsername();
     }
 
     public static String getRealName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getRealName();
+        return ((LoginUserInfo) authentication.getPrincipal()).getRealName();
     }
 
     public static boolean isAdmin() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
-        return loginUserInfo.getSysUser().getIsAdmin() == AdminEnum.Admin.getValue();
+        return loginUserInfo.getIsAdmin() == AdminEnum.Admin.getValue();
     }
 
 

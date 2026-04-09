@@ -17,6 +17,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.http.HttpHeaders;
+import org.springframework.security.authentication.CredentialsExpiredException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -47,40 +48,44 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
 
-//        // 自定义方法，判断是否为静态资源请求
-//        if (isStaticResourceRequest(request)) {
-//            chain.doFilter(request, response); // 直接传递给下一个过滤器
-//            return;
-//        }
-        // 检查URL是否在白名单内
-        if (isWhiteUrl(request.getServletPath(), whiteUrlProperties.getUrl())) {
+
+        // 1. 白名单检查
+        if (isWhiteUrl(request.getServletPath())) {
             chain.doFilter(request, response);
             return;
         }
 
 
-        // 验证授权信息
+        // 2. 获取Token
+         String token = extractToken(request);
         if (!StringUtils.hasText(request.getHeader(HttpHeaders.AUTHORIZATION))) {
             chain.doFilter(request, response);
             return;
         }
+       // 3. 解析JWT
+        Claims claims = jwtUtil.parseToken(token);
 
-        // 解析Token并验证用户信息
-        LoginUserInfo loginUserInfo = authenticate(request);
+        // 4. 获取Redis Key（根据用户类型）
+        String redisKey = jwtUtil.getRedisKey(claims);
 
-        // 设置认证信息
-        setAuthentication(Objects.requireNonNull(loginUserInfo));
+        // 5. 从Redis获取用户信息
+        LoginUserInfo loginUserInfo = redisUtil.getObject(redisKey, LoginUserInfo.class);
+
+        if (loginUserInfo == null) {
+            throw new CredentialsExpiredException("登录已过期，请重新登录");
+        }
+
+
+        
+       // 6. 设置认证信息
+        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(loginUserInfo, null, loginUserInfo.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
 
         // 放行
         chain.doFilter(request, response);
     }
 
-    /**
-     * 从 Authorization Header 或 URL 参数中提取 Token 并解析用户信息
-     */
-    @Nullable
-    private LoginUserInfo authenticate(@NotNull HttpServletRequest request) {
-        // 优先从 Authorization Header 获取
+    private String extractToken(HttpServletRequest request) {
         String token = null;
         String authorization = request.getHeader(HttpHeaders.AUTHORIZATION);
         if (StringUtils.hasText(authorization) && authorization.startsWith(Constants.TOKEN_PREFIX)) {
@@ -94,29 +99,18 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         if (!StringUtils.hasText(token)) {
             return null;
         }
-
-        Claims claims = jwtUtil.parseToken(token);
-        if (Objects.isNull(claims)) {
-            throw new ZsException("Invalid token");
-        }
-        String loginInfo = claims.getSubject();
-        Object jsonLoginUserInfo = redisUtil.get(loginInfo);
-
-        return JSONUtil.toBean(JSONUtil.parseObj(jsonLoginUserInfo), LoginUserInfo.class);
+        return token;
     }
+
 
     private void setAuthentication(@NotNull LoginUserInfo loginUserInfo) {
-        // 获取权限信息封装到Authentication中
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(loginUserInfo, null, loginUserInfo.getAuthorities());
-        // 存入SecurityContextHolder
-        SecurityContextHolder.getContext().setAuthentication(authenticationToken);
-    }
+   
 
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-    private boolean isWhiteUrl(String requestPath, List<String> whiteUrls) {
-        for (String whiteUrl : whiteUrls) {
+    private boolean isWhiteUrl(String requestPath) {
+        for (String whiteUrl : whiteUrlProperties.getUrl()) {
             if (antPathMatcher.match(whiteUrl, requestPath)) {
                 return true;
             }

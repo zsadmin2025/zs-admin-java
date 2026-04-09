@@ -13,10 +13,11 @@ import com.zs.common.core.enums.StatusEnum;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.model.DataPermission;
 import com.zs.common.core.model.LoginUserInfo;
-import com.zs.common.core.model.SysUser;
+import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.page.PageInfo;
 import com.zs.common.core.page.PageResult;
 import com.zs.common.security.service.CustomUserDetailsService;
+import com.zs.common.security.service.PlatformUserDetailsService;
 import com.zs.sys.dept.service.ISysDeptService;
 import com.zs.sys.menu.service.ISysMenuService;
 import com.zs.sys.role.domain.entity.SysRoleEntity;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
  * @author zsadmin
  */
 @Service
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity> implements ISysUserService, CustomUserDetailsService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity> implements ISysUserService, PlatformUserDetailsService {
 
 
     @Resource
@@ -289,6 +290,11 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         dataPermission.setDeptIds(deptIds);
 
         return dataPermission;
+    }
+
+    @Override
+    public LoginUserInfo loadUserByUsernameAndTenant(String username, String tenantId) {
+        throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsernameAndTenant'");
     }
 
 }

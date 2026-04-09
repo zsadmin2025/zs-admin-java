@@ -2,6 +2,8 @@ package com.zs.common.core.utils;
 
 
 import com.zs.common.core.constant.Constants;
+import com.zs.common.core.enums.UserTypeEnum;
+import com.zs.common.core.model.BaseUserInfo;
 import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.redis.config.RedisUtil;
 import io.jsonwebtoken.Claims;
@@ -11,6 +13,8 @@ import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
+
+import org.apache.xmlbeans.UserType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -50,7 +54,8 @@ public class JwtUtil {
      *
      * @return String
      */
-    public String createToken(@NotNull LoginUserInfo loginUserInfo) {
+    public String createToken(LoginUserInfo loginUserInfo) {
+        BaseUserInfo user = loginUserInfo.getUserInfo();
         //header参数
         final Map<String, Object> headerMap = new HashMap<>();
         headerMap.put("alg", "HS256");
@@ -59,15 +64,17 @@ public class JwtUtil {
         String token = Jwts.builder()
                 .header().add(headerMap)
                 .and()
-                .subject(Constants.LOGIN_INFO + loginUserInfo.sysUser.getSysUserId())
+                .subject(getLoginInfoKey(user.getUserType(), user.getUserId()))
                 .issuer(ISSUER)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expirationTime * 1000L))
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
-        redisUtil.setObject(Constants.LOGIN_INFO + loginUserInfo.getSysUser().getSysUserId(), loginUserInfo, expirationTime, TimeUnit.SECONDS);
+        // redisUtil.setObject(Constants.LOGIN_INFO + loginUserInfo.getSysUser().getSysUserId(), loginUserInfo, expirationTime, TimeUnit.SECONDS);
         return token;
     }
+
+
 
     /**
      * 解析token
@@ -84,5 +91,26 @@ public class JwtUtil {
         } catch (Exception e) {
             return null;
         }
+    }
+
+
+
+    public String getLoginInfoKey(UserTypeEnum userType, Long userId) {
+        return switch (userType) {
+            case PLATFORM -> Constants.LOGIN_INFO + userId;
+            case MEMBER -> Constants.MEMBER_LOGIN_INFO + userId;
+            case COMPANION -> Constants.COMPANION_LOGIN_INFO + userId;
+        };
+    }
+
+
+     public String getRedisKey(Claims claims) {
+        String userType = claims.get("userType", String.class);
+        Long userId = claims.get("userId", Long.class);
+        return switch (UserTypeEnum.fromCode(userType)) {
+            case PLATFORM -> Constants.LOGIN_INFO + userId;
+            case MEMBER -> Constants.MEMBER_LOGIN_INFO + userId;
+            case COMPANION -> Constants.COMPANION_LOGIN_INFO + userId;
+        };
     }
 }
