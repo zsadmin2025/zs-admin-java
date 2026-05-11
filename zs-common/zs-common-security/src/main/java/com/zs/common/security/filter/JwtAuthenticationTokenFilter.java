@@ -69,7 +69,12 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
         String redisKey = jwtUtil.getRedisKey(claims);
 
         // 5. 从Redis获取用户信息
-        LoginUserInfo loginUserInfo = redisUtil.getObject(redisKey, LoginUserInfo.class);
+        Object jsonLoginUserInfo = redisUtil.get(redisKey);
+        if (jsonLoginUserInfo == null) {
+            chain.doFilter(request, response);
+            return;
+        }
+        LoginUserInfo loginUserInfo = JSONUtil.toBean(JSONUtil.parseObj(jsonLoginUserInfo), LoginUserInfo.class);
 
         if (loginUserInfo == null) {
             throw new CredentialsExpiredException("登录已过期，请重新登录");
@@ -104,8 +109,8 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
 
     private void setAuthentication(@NotNull LoginUserInfo loginUserInfo) {
-   
 
+    }
 
     private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 

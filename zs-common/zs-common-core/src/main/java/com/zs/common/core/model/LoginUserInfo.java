@@ -13,21 +13,26 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author zsadmin
+ * 登录用户信息
  */
 @Data
 public class LoginUserInfo implements UserDetails {
 
-   
+
+    // 登录用户基础信息
     private BaseUserInfo userInfo;
 
+    // 权限信息
     private Set<String> permissions;
 
+    // 数据权限信息
     private DataPermission dataPermission;
 
 
@@ -43,7 +48,7 @@ public class LoginUserInfo implements UserDetails {
     }
 
     // ==================== 工厂方法 ====================
-    
+    //  平台端用户
     public static LoginUserInfo ofPlatform(PlatformUserInfo user, Set<String> permissions, DataPermission dataPermission) {
         return new LoginUserInfo(user, permissions, dataPermission);
     }
@@ -51,15 +56,16 @@ public class LoginUserInfo implements UserDetails {
 
 
     // ==================== 类型安全获取方法 ====================
-    
+
     public UserTypeEnum getUserType() {
         return userInfo.getUserType();
     }
-    
+
     public Long getUserId() {
         return userInfo.getUserId();
     }
 
+    // 平台端用户
     public SysUser getPlatformUser() {
         if (userInfo instanceof SysUser p) {
             return p;
@@ -67,11 +73,32 @@ public class LoginUserInfo implements UserDetails {
         throw new IllegalStateException("当前用户不是平台端用户，实际类型: " + getUserType());
     }
 
+    public SysUser getSysUser() {
+        return getPlatformUser();
+    }
+
+    public String getRealName() {
+        return userInfo.getRealName();
+    }
+
+    public Integer getIsAdmin() {
+        if (userInfo instanceof SysUser s) {
+            return s.getIsAdmin();
+        }
+        if (userInfo instanceof PlatformUserInfo p) {
+            return p.getIsAdmin();
+        }
+        return null;
+    }
+
 
 
     @NotNull
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (permissions == null || permissions.isEmpty()) {
+            return Collections.emptySet();
+        }
         return permissions.stream()
                 .filter(Objects::nonNull) // 确保权限字符串不为 null
                 .filter(permission -> !permission.trim().isEmpty()) // 确保权限字符串不为空或仅包含空白字符
@@ -101,7 +128,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     /**
@@ -109,7 +136,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     /**
@@ -117,7 +144,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     /**
@@ -125,7 +152,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        return userInfo.getStatus() == 1;
+        return userInfo != null && userInfo.isEnabled();
     }
 
 }

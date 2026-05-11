@@ -294,7 +294,14 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
 
     @Override
     public LoginUserInfo loadUserByUsernameAndTenant(String username, String tenantId) {
-        throw new UnsupportedOperationException("Unimplemented method 'loadUserByUsernameAndTenant'");
+        SysUserEntity sysUserEntity = baseMapper.selectByUserNameAndTenant(username, tenantId);
+        if (Objects.isNull(sysUserEntity)) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+        SysUser sysUser = BeanUtil.toBean(sysUserEntity, SysUser.class);
+        List<SysRoleEntity> roles = iSysRoleService.findByUserId(sysUserEntity.getSysUserId());
+        DataPermission dataPermission = buildDataPermission(sysUser, roles);
+        return new LoginUserInfo(sysUser, getPermissions(sysUserEntity), dataPermission);
     }
 
 }

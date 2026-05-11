@@ -59,6 +59,13 @@
                  LEFT JOIN sys_post c ON c.sys_post_id = a.sys_post_id
         WHERE a.username = #{username}
     </select>
+    <select id="selectByUserNameAndTenant" resultType="com.zs.sys.user.domain.entity.SysUserEntity">
+        SELECT a.*, b.dept_name, c.post_name
+        FROM `sys_user` a
+                 LEFT JOIN sys_dept b ON b.sys_dept_id = a.sys_dept_id
+                 LEFT JOIN sys_post c ON c.sys_post_id = a.sys_post_id
+        WHERE a.username = #{username} AND a.tenant_id = #{tenantId}
+    </select>
     <select id="getList" resultType="com.zs.sys.user.domain.entity.SysUserEntity">
         select a.*,b.dept_name,c.post_name
         from sys_user a

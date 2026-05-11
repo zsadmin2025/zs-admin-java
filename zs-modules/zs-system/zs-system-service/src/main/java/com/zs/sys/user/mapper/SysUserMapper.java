@@ -26,6 +26,8 @@ public interface SysUserMapper extends DataPermissionMapper<SysUserEntity> {
 
     SysUserEntity selectByUserName(String userName);
 
+    SysUserEntity selectByUserNameAndTenant(@Param("username") String username, @Param("tenantId") String tenantId);
+
     List<SysUserEntity> getUserList(List<Long> sysUserIds);
 
 }

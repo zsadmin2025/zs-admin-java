@@ -14,7 +14,7 @@ import java.util.Date;
  */
 @Data
 @EqualsAndHashCode(callSuper = true)
-public class SysUser extends BaseUserInfo{
+public class SysUser extends BaseUserInfo {
 
     private Long sysDeptId;
 
@@ -49,5 +49,10 @@ public class SysUser extends BaseUserInfo{
     @Override
     public UserTypeEnum getUserType() {
         return UserTypeEnum.PLATFORM;
+    }
+
+
+    public Long getSysUserId() {
+        return getUserId();
     }
 }

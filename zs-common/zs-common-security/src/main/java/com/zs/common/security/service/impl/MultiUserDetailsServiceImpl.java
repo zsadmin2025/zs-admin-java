@@ -5,10 +5,12 @@ import org.springframework.stereotype.Service;
 
 import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.model.LoginUserInfo;
+import com.zs.common.core.tenant.TenantContext;
 import com.zs.common.security.service.CustomUserDetailsService;
 import com.zs.common.security.service.PlatformUserDetailsService;
 
 import jakarta.annotation.Resource;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 多用户类型业务实现
@@ -23,6 +25,10 @@ public class MultiUserDetailsServiceImpl implements CustomUserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) {
+        String tenantId = TenantContext.getTenantId();
+        if (StringUtils.isNotBlank(tenantId)) {
+            return loadUserByUserType(username, tenantId, UserTypeEnum.PLATFORM);
+        }
         return platformUserDetailsService.loadUserByUsername(username);
     }
 
@@ -33,5 +39,5 @@ public class MultiUserDetailsServiceImpl implements CustomUserDetailsService {
             default -> throw new IllegalArgumentException("Unsupported user type: " + userTypeEnum);
         };
     }
-    
+
 }

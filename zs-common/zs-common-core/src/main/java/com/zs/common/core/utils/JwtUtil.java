@@ -14,7 +14,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
 
-import org.apache.xmlbeans.UserType;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -61,9 +60,18 @@ public class JwtUtil {
         headerMap.put("alg", "HS256");
         headerMap.put("typ", "JWT");
 
+
+          Map<String, Object> claims = new HashMap<>();
+            claims.put("userType", user.getUserType().getCode());
+            claims.put("userId", user.getUserId());
+            claims.put("tenantId", String.valueOf(com.zs.common.core.tenant.TenantContext.getTenantId()));
+            claims.put(Constants.TENANT_HEADER, String.valueOf(com.zs.common.core.tenant.TenantContext.getTenantId()));
+            // sessionId, clientType, deviceId 字段预留，后续可按需启用
+
         String token = Jwts.builder()
                 .header().add(headerMap)
                 .and()
+                .claims(claims)
                 .subject(getLoginInfoKey(user.getUserType(), user.getUserId()))
                 .issuer(ISSUER)
                 .issuedAt(new Date())
