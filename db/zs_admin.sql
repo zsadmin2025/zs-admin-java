@@ -5871,4 +5871,32 @@ END
 ;;
 delimiter ;
 
+-- ----------------------------
+-- Table structure for member_user
+-- ----------------------------
+DROP TABLE IF EXISTS `member_user`;
+CREATE TABLE `member_user`  (
+  `member_user_id` bigint NOT NULL COMMENT '主键ID',
+  `phone` varchar(11) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '手机号',
+  `password` varchar(200) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '密码',
+  `nickname` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '昵称',
+  `avatar` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '头像',
+  `sex` int NULL DEFAULT NULL COMMENT '性别 0-女 1-男',
+  `openid` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '微信openid',
+  `status` int NULL DEFAULT 1 COMMENT '状态 0-禁用 1-正常',
+  `deleted` int NULL DEFAULT 0 COMMENT '逻辑删除 0-未逻辑删除 1-已逻辑删除',
+  `creator` bigint NULL DEFAULT NULL COMMENT '创建者',
+  `create_time` datetime NULL DEFAULT NULL COMMENT '创建时间',
+  `updater` bigint NULL DEFAULT NULL COMMENT '更新者',
+  `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
+  `tenant_id` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NULL DEFAULT NULL COMMENT '租户id',
+  PRIMARY KEY (`member_user_id`) USING BTREE,
+  INDEX `idx_phone`(`phone`) USING BTREE
+) ENGINE = InnoDB CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = '会员用户表' ROW_FORMAT = DYNAMIC;
+
+-- ----------------------------
+-- Records of member_user
+-- ----------------------------
+INSERT INTO `member_user` VALUES (1, '13800000001', '$2a$10$1ygVJGHcy7E6eEy0xBw.6uHtfhUjPOoQ5039JhrliJJGDvNm6nSLu', '测试会员', NULL, 1, NULL, 1, 0, NULL, '2025-01-01 00:00:00', NULL, NULL, '1');
+
 SET FOREIGN_KEY_CHECKS = 1;

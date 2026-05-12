@@ -13,7 +13,8 @@ import jakarta.annotation.Resource;
 import org.apache.commons.lang3.StringUtils;
 
 /**
- * 多用户类型业务实现
+ * 平台端用户详情服务实现
+ * 会员端走 MemberLoginController 直接调用 MemberUserDetailsService，不经过此类
  *
  * @author zsadmin
  */

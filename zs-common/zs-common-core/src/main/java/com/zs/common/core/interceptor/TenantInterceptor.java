@@ -24,6 +24,8 @@ public class TenantInterceptor implements HandlerInterceptor {
     private static final String[] WHITE_LIST = {
             "/auth/captcha",
             "/auth/login",
+            "/member/auth/captcha",
+            "/member/auth/login",
             "/system/sys/config/website",
             "/system/sys/tenant/select",
             // 🔹 报表

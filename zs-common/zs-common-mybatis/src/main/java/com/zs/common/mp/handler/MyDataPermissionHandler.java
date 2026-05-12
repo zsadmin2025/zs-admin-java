@@ -189,7 +189,7 @@ public class MyDataPermissionHandler {
     private Expression createCreatedByUserPermissionExpression(@NotNull LoginUserInfo loginUserInfo, String userIdColumn) {
         return new EqualsTo(
                 new Column(userIdColumn),
-                new LongValue(loginUserInfo.getSysUser().getSysUserId())
+                new LongValue(loginUserInfo.getUserId())
         );
     }
 

@@ -78,7 +78,6 @@ public class JwtUtil {
                 .expiration(new Date(System.currentTimeMillis() + expirationTime * 1000L))
                 .signWith(secretKey, Jwts.SIG.HS256)
                 .compact();
-        // redisUtil.setObject(Constants.LOGIN_INFO + loginUserInfo.getSysUser().getSysUserId(), loginUserInfo, expirationTime, TimeUnit.SECONDS);
         return token;
     }
 
@@ -102,6 +101,10 @@ public class JwtUtil {
     }
 
 
+
+    public Long getExpirationTime() {
+        return expirationTime;
+    }
 
     public String getLoginInfoKey(UserTypeEnum userType, Long userId) {
         return switch (userType) {

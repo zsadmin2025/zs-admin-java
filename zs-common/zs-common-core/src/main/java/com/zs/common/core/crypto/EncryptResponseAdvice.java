@@ -71,7 +71,7 @@ public class EncryptResponseAdvice implements ResponseBodyAdvice<Object> {
         Object data = Objects.requireNonNull(result).getData();
         try {
             if(encryption.value() == CryptoTypeEnum.SM4){
-                String sm4Key = Objects.requireNonNull(redisUtil.get(RedisConstants.SM4_KEY + SecurityUtil.getUserInfo().getSysUser().getSysUserId())).toString();
+                String sm4Key = Objects.requireNonNull(redisUtil.get(RedisConstants.SM4_KEY + SecurityUtil.getUserId())).toString();
                 String encryptedData = CryptoUtil.sm4Encrypt(data == null ? "" : objectMapper.writeValueAsString(data), sm4Key);
                 // 设置加密后的数据
                 EncryptedModel encryptedModel = new EncryptedModel();

@@ -94,6 +94,10 @@ public class LoginServiceImpl implements ILoginService {
         // 保存加密的key
         saveCryptoKeyToRedis(request, loginUserInfo.getSysUser());
 
+        // 将登录用户信息写入Redis，JwtAuthenticationTokenFilter会从中读取
+        String redisKey = jwtUtil.getLoginInfoKey(loginUserInfo.getUserType(), loginUserInfo.getUserId());
+        redisUtil.setObject(redisKey, loginUserInfo, jwtUtil.getExpirationTime(), TimeUnit.SECONDS);
+
         TokenVO tokenVO = new TokenVO();
         tokenVO.setAccessToken(jwtUtil.createToken(loginUserInfo));
         tokenVO.setRefreshToken("");
@@ -148,6 +152,8 @@ public class LoginServiceImpl implements ILoginService {
                 return false;
             }
 
+            // 验证后立即删除，防止重放
+            redisUtil.del(captchaKey);
             // 如果验证码不区分大小写，使用equalsIgnoreCase；否则使用equals
             return captcha.equalsIgnoreCase(code); // 验证码不区分大小写
 

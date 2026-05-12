@@ -90,7 +90,7 @@ public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
 
     private String decryptBody(String encryptedBody, CryptoTypeEnum type) {
         return switch (type) {
-            case SM4 -> CryptoUtil.sm4Decrypt(encryptedBody, Objects.requireNonNull(redisUtil.get(RedisConstants.SM4_KEY + SecurityUtil.getUserInfo().getSysUser().getSysUserId())).toString());
+            case SM4 -> CryptoUtil.sm4Decrypt(encryptedBody, Objects.requireNonNull(redisUtil.get(RedisConstants.SM4_KEY + SecurityUtil.getUserId())).toString());
             case SM2 -> CryptoUtil.sm2Decrypt(encryptedBody);
         };
     }

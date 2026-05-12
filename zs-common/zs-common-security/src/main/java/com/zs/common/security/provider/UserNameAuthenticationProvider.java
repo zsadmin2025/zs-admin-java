@@ -83,7 +83,7 @@ public class UserNameAuthenticationProvider implements AuthenticationProvider {
         UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
         result.setDetails(authentication.getDetails());
         // 将 Authentication 认证信息对象绑定到 SecurityContext即安全上下文中
-        SecurityContextHolder.getContext().setAuthentication(authentication);
+        SecurityContextHolder.getContext().setAuthentication(result);
 
 //        String token = JwtUtil.createToken();
         return result;

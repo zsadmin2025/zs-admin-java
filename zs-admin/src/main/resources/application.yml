@@ -73,6 +73,8 @@ security:
     url:
       - /auth/login
       - /auth/captcha
+      - /member/auth/login
+      - /member/auth/captcha
       #- /auth/logout
       - /actuator/** # 允许访问执行器端点
       - /instances/** # 允许访问 Spring Boot Admin 实例

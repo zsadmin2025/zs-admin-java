@@ -48,6 +48,6 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         String loginInfoKey = jwtUtil.getLoginInfoKey(loginUserInfo.getUserType(), loginUserInfo.getUserId());
         redisUtil.del(loginInfoKey);
         // 清除在线用户记录
-        redisUtil.del(RedisConstants.ONLINE_USER + loginUserInfo.getSysUser().getSysUserId());
+        redisUtil.del(RedisConstants.ONLINE_USER + loginUserInfo.getUserId());
     }
 }
