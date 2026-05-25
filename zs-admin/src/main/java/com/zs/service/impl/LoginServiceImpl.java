@@ -108,7 +108,7 @@ public class LoginServiceImpl implements ILoginService {
     public Result<CodeVO> captcha(HttpServletRequest request, HttpServletResponse response) {
         try {
             // 设置响应内容类型
-            response.setContentType("image/png;charset=UTF-8");
+//            response.setContentType("image/png;charset=UTF-8");
             // 禁止缓存
             response.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, post-check=0, pre-check=0");
             response.setHeader("Pragma", "no-cache");
