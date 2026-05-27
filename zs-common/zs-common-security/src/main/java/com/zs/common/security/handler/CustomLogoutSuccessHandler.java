@@ -37,7 +37,8 @@ public class CustomLogoutSuccessHandler implements LogoutSuccessHandler {
         delRedisLoginUserInfo(loginUserInfo);
 
         response.setContentType("application/json;charset=UTF-8");
-        String s = JSONUtil.toJsonStr(new Result<>().ok(200, "注销成功", null));
+        Result<Void> result = new Result<>();
+        String s = JSONUtil.toJsonStr(result.ok(200, "注销成功", null));
         response.getWriter().println(s);
     }
 

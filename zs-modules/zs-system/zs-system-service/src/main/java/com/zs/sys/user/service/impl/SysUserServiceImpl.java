@@ -236,7 +236,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         if (Objects.isNull(sysUserEntity)) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        SysUser sysUser = BeanUtil.toBean(sysUserEntity, SysUser.class);
+        SysUser sysUser = toSysUser(sysUserEntity);
 
         // 获取用户的角色
         List<SysRoleEntity> roles = iSysRoleService.findByUserId(sysUserEntity.getSysUserId());
@@ -245,6 +245,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
 
         return new LoginUserInfo(sysUser, getPermissions(sysUserEntity), dataPermission);
     }
+
 
 
 
@@ -298,10 +299,16 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         if (Objects.isNull(sysUserEntity)) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        SysUser sysUser = BeanUtil.toBean(sysUserEntity, SysUser.class);
+        SysUser sysUser = toSysUser(sysUserEntity);
         List<SysRoleEntity> roles = iSysRoleService.findByUserId(sysUserEntity.getSysUserId());
         DataPermission dataPermission = buildDataPermission(sysUser, roles);
         return new LoginUserInfo(sysUser, getPermissions(sysUserEntity), dataPermission);
+    }
+
+    private SysUser toSysUser(SysUserEntity entity) {
+        SysUser sysUser = BeanUtil.toBean(entity, SysUser.class);
+        sysUser.setUserId(entity.getSysUserId());
+        return sysUser;
     }
 
 }

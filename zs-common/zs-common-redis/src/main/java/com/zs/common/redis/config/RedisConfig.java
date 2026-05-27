@@ -3,6 +3,7 @@ package com.zs.common.redis.config;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Value;
@@ -55,11 +56,17 @@ public class RedisConfig {
 
 
         //Json序列化配置
-        Jackson2JsonRedisSerializer<Object> valueSerializer = new Jackson2JsonRedisSerializer<>(Object.class);
         ObjectMapper mp = new ObjectMapper();
         mp.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-        mp.activateDefaultTyping(mp.getPolymorphicTypeValidator());
-        valueSerializer.serialize(mp);
+        mp.activateDefaultTyping(
+                mp.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL,
+                com.fasterxml.jackson.annotation.JsonTypeInfo.As.WRAPPER_OBJECT
+        );
+        // 全局忽略 未知字段（前端+Redis+所有接口通用）
+        mp.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        // ================================================
+        Jackson2JsonRedisSerializer<Object> valueSerializer = new Jackson2JsonRedisSerializer<>(mp, Object.class);
 
         // Spring的序列化
         StringRedisSerializer stringRedisSerializer = new StringRedisSerializer();

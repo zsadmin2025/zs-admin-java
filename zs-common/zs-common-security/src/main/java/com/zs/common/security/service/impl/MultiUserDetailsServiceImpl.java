@@ -27,16 +27,14 @@ public class MultiUserDetailsServiceImpl implements CustomUserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) {
         String tenantId = TenantContext.getTenantId();
-        if (StringUtils.isNotBlank(tenantId)) {
-            return loadUserByUserType(username, tenantId, UserTypeEnum.PLATFORM);
-        }
-        return platformUserDetailsService.loadUserByUsername(username);
+        return loadUserByUserType(username, tenantId, UserTypeEnum.PLATFORM);
     }
 
     @Override
     public LoginUserInfo loadUserByUserType(String username, String tenantId, UserTypeEnum userTypeEnum) {
         return switch (userTypeEnum) {
             case PLATFORM -> platformUserDetailsService.loadUserByUsernameAndTenant(username, tenantId);
+            case MEMBER -> null;
             default -> throw new IllegalArgumentException("Unsupported user type: " + userTypeEnum);
         };
     }

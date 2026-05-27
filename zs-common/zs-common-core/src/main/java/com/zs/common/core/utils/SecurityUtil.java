@@ -3,6 +3,7 @@ package com.zs.common.core.utils;
 
 import com.zs.common.core.enums.AdminEnum;
 import com.zs.common.core.model.LoginUserInfo;
+import com.zs.common.core.model.user.SysUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -32,7 +33,7 @@ public class SecurityUtil {
 
     public static String getRealName() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getRealName();
+        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getRealName();
     }
 
     public static boolean isAdmin() {
@@ -40,6 +41,8 @@ public class SecurityUtil {
         LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
         return loginUserInfo.getIsAdmin() == AdminEnum.Admin.getValue();
     }
+
+
 
 
 }

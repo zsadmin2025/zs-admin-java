@@ -10,7 +10,6 @@ import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.utils.CryptoUtil;
 import com.zs.common.core.utils.SecurityUtil;
 import com.zs.common.redis.config.RedisUtil;
-import io.micrometer.common.lang.NonNullApi;
 import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import org.springframework.core.MethodParameter;
@@ -27,7 +26,6 @@ import java.util.Objects;
  * 返回值加密
  */
 @RestControllerAdvice
-@NonNullApi
 public class EncryptResponseAdvice implements ResponseBodyAdvice<Object> {
 
     @Resource

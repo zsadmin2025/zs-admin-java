@@ -71,22 +71,26 @@ tenant:
 security:
   white:
     url:
-      - /auth/login
       - /auth/captcha
-      - /member/auth/login
-      - /member/auth/captcha
-      #- /auth/logout
-      - /actuator/** # 允许访问执行器端点
-      - /instances/** # 允许访问 Spring Boot Admin 实例
-      - /assets/** # 允许访问静态资产（CSS、JS 等）
-      - /druid/**
+      - /auth/login
       - /system/sys/tenant/select
       - /system/sys/config/website
+      - /member/auth/captcha
+      - /member/auth/login
+      - /file/**
+      - /actuator/** # 允许访问执行器端点
+      - /instances/** # 允许访问 Spring Boot Admin 实例
+      - /druid/**
       - /doc.html
       - /websocket/**
       - /jmreport/**
+      - /ws/** # WebSocket SockJS 握手
       - /favicon.ico
-      - /file/**
+      - /v3/api-docs
+      - /v3/api-docs/** # Swagger API 文档
+      - /webjars/** # Swagger 静态资源
+      - /swagger-resources/**
+      - /swagger-ui/** # Swagger UI 页面
 jwt:
   # 密钥 长度256
   secret: QxXJ18vaaiH0781h6rzMurcyJNzcGtsWYfzc/OyqKBI=

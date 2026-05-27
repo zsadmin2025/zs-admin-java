@@ -5,26 +5,28 @@ import com.zs.common.core.enums.UserTypeEnum;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @Data
 public abstract class BaseUserInfo implements Serializable {
 
-    protected Long userId;
+    private Long userId;
 
-    protected String username;
+    private String username;
 
-    @JsonIgnore
-    protected String password;
+    private String ip;
 
-    protected String realName;
+    private String ipAddress;
 
-    protected String avatar;
+    private String browser;
 
-    protected String phone;
+    private String os;
 
-    protected String email;
+    private Date loginTime;
 
     protected Integer status;
+
+    private Long tenantId;
 
     public abstract UserTypeEnum getUserType();
 

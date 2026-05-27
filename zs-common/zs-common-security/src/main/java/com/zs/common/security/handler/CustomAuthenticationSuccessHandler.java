@@ -49,35 +49,35 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     @LoginLog
     @Override
     public void onAuthenticationSuccess(@NotNull HttpServletRequest request, @NotNull HttpServletResponse response, @NotNull Authentication authentication) throws IOException {
-        LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
-
-        String userAgentString = request.getHeader(HttpHeaders.USER_AGENT);
-        UserAgent userAgent = UserAgentUtil.parse(userAgentString);
-        String ipAddr = IpUtils.getIpAddr(request);
-
-
-        SysUser sysUser = loginUserInfo.getSysUser();
-        sysUser.setIp(ipAddr);
-        sysUser.setIpAddress(IpUtils.getCityInfo(ipAddr));
-        sysUser.setLoginTime(new Date());
-        sysUser.setBrowser(userAgent.getBrowser().toString());
-        sysUser.setOs(userAgent.getOs().toString());
-
-
-
-        // 保存加密的key
-        saveCryptoKeyToRedis(request, loginUserInfo.getSysUser());
-
-        TokenVO tokenVO = new TokenVO();
-        tokenVO.setAccessToken(jwtUtil.createToken(loginUserInfo));
-        tokenVO.setRefreshToken("");
-        Result<Object> result = new Result<>().ok(200, "登录成功", tokenVO);
-        String responseBody = objectMapper.writeValueAsString(result);
-
-        // Write to the response
-        response.setContentType("application/json;charset=UTF-8");
-        response.setStatus(HttpStatus.OK.value());
-        response.getWriter().write(responseBody);
+//        LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
+//
+//        String userAgentString = request.getHeader(HttpHeaders.USER_AGENT);
+//        UserAgent userAgent = UserAgentUtil.parse(userAgentString);
+//        String ipAddr = IpUtils.getIpAddr(request);
+//
+//
+//        SysUser sysUser = loginUserInfo.getUserInfo();
+//        sysUser.setIp(ipAddr);
+//        sysUser.setIpAddress(IpUtils.getCityInfo(ipAddr));
+//        sysUser.setLoginTime(new Date());
+//        sysUser.setBrowser(userAgent.getBrowser().toString());
+//        sysUser.setOs(userAgent.getOs().toString());
+//
+//
+//
+//        // 保存加密的key
+//        saveCryptoKeyToRedis(request, loginUserInfo.getSysUser());
+//
+//        TokenVO tokenVO = new TokenVO();
+//        tokenVO.setAccessToken(jwtUtil.createToken(loginUserInfo));
+//        tokenVO.setRefreshToken("");
+//        Result<Object> result = new Result<>().ok(200, "登录成功", tokenVO);
+//        String responseBody = objectMapper.writeValueAsString(result);
+//
+//        // Write to the response
+//        response.setContentType("application/json;charset=UTF-8");
+//        response.setStatus(HttpStatus.OK.value());
+//        response.getWriter().write(responseBody);
 
     }
     private void saveCryptoKeyToRedis(HttpServletRequest request, SysUser sysUser) {
@@ -88,23 +88,23 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
         String decryptedKey = CryptoUtil.sm2Decrypt(cryptoKey).replace("\"", "");
         redisUtil.setObject(RedisConstants.SM4_KEY + sysUser.getSysUserId(), decryptedKey);
     }
-    @Async
-    public void setUserInfoToRedis(@NotNull HttpServletRequest request, @NotNull SysUser sysUser){
-        String userAgentString = request.getHeader(HttpHeaders.USER_AGENT);
-        UserAgent userAgent = UserAgentUtil.parse(userAgentString);
-        String ipAddr = IpUtils.getIpAddr(request);
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("sysUserId", sysUser.getSysUserId());
-        map.put("username", sysUser.getUsername());
-        map.put("realName", sysUser.getRealName());
-        map.put("avatar", sysUser.getAvatar());
-        map.put("loginTime", sysUser.getLoginTime());
-        map.put("ip", ipAddr);
-        map.put("city", IpUtils.getCityInfo(ipAddr));
-        map.put("browser", userAgent.getBrowser().toString());
-        map.put("os", userAgent.getOs().toString());
-
-        redisUtil.setObject(RedisConstants.ONLINE_USER + sysUser.getSysUserId(), map);
-    }
+//    @Async
+//    public void setUserInfoToRedis(@NotNull HttpServletRequest request, @NotNull SysUser sysUser){
+//        String userAgentString = request.getHeader(HttpHeaders.USER_AGENT);
+//        UserAgent userAgent = UserAgentUtil.parse(userAgentString);
+//        String ipAddr = IpUtils.getIpAddr(request);
+//
+//        Map<String, Object> map = new HashMap<>();
+//        map.put("sysUserId", sysUser.getSysUserId());
+//        map.put("username", sysUser.getUsername());
+//        map.put("realName", sysUser.getRealName());
+//        map.put("avatar", sysUser.getAvatar());
+//        map.put("loginTime", sysUser.getLoginTime());
+//        map.put("ip", ipAddr);
+//        map.put("city", IpUtils.getCityInfo(ipAddr));
+//        map.put("browser", userAgent.getBrowser().toString());
+//        map.put("os", userAgent.getOs().toString());
+//
+//        redisUtil.setObject(RedisConstants.ONLINE_USER + sysUser.getSysUserId(), map);
+//    }
 }

@@ -3,6 +3,7 @@ package com.zs.common.core.interceptor;
 import com.zs.common.core.constant.Constants;
 import com.zs.common.core.exception.ErrorCodeConstants;
 import com.zs.common.core.exception.ZsException;
+import com.zs.common.core.propetties.WhiteUrlProperties;
 import com.zs.common.core.tenant.TenantContext;
 import com.zs.common.core.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -12,6 +13,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
 
@@ -20,37 +22,18 @@ import org.springframework.web.servlet.resource.ResourceHttpRequestHandler;
  */
 @Component
 public class TenantInterceptor implements HandlerInterceptor {
-    // 白名单路径
-    private static final String[] WHITE_LIST = {
-            "/auth/captcha",
-            "/auth/login",
-            "/member/auth/captcha",
-            "/member/auth/login",
-            "/system/sys/config/website",
-            "/system/sys/tenant/select",
-            // 🔹 报表
-            "/jmreport",
-            // 🔹 接口文档
-            "/doc.html",
-            "/v3/api-docs",
-            "/v3/api-docs/**",
-            "/webjars",
-            "/webjars/**",
-            "/swagger-resources",
-            "/swagger-resources/**",
-            "/swagger-ui/index.html",
 
-            // 🔹 监控类
-            "/druid/",
-            "/actuator/"
-    };
+    @Resource
+    private WhiteUrlProperties whiteUrlProperties;
 
     @Resource
     private  JwtUtil jwtUtil;
 
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
 
-
-
+    /**
+     * 请求处理之前执行，返回false表示请求中断
+     */
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
 
@@ -70,8 +53,9 @@ public class TenantInterceptor implements HandlerInterceptor {
         return true;
     }
 
-
-
+    /**
+     * 请求完成之后执行，用于清理租户ID
+     */
     @Override
     public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) {
         // 请求完成后清除租户ID，避免线程复用导致的问题
@@ -82,9 +66,9 @@ public class TenantInterceptor implements HandlerInterceptor {
      * 判断是否是白名单路径
      */
     private boolean isWhiteList(HttpServletRequest request) {
-        String uri = request.getRequestURI();
-        for (String whitePath : WHITE_LIST) {
-            if (uri.contains(whitePath)) {
+        String uri = request.getServletPath();
+        for (String whitePath : whiteUrlProperties.getUrl()) {
+            if (antPathMatcher.match(whitePath, uri)) {
                 return true;
             }
         }

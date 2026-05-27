@@ -8,9 +8,8 @@ import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.utils.JwtUtil;
 import com.zs.common.redis.config.RedisUtil;
-import com.zs.common.security.propetties.WhiteUrlProperties;
+import com.zs.common.core.propetties.WhiteUrlProperties;
 import io.jsonwebtoken.Claims;
-import io.micrometer.common.lang.NonNullApi;
 import jakarta.annotation.Resource;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,7 +32,6 @@ import java.io.IOException;
  * @author zsadmin
  */
 @Component
-@NonNullApi
 public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
     @Resource
@@ -54,7 +52,7 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
 
         // 2. 获取Token
         String token = extractToken(request);
-        if (!StringUtils.hasText(request.getHeader(HttpHeaders.AUTHORIZATION))) {
+        if (!StringUtils.hasText(token)) {
             chain.doFilter(request, response);
             return;
         }
@@ -82,10 +80,16 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
             writeError(response, HttpEnum.UNAUTHORIZED, "登录已过期，请重新登录");
             return;
         }
-        LoginUserInfo loginUserInfo = JSONUtil.toBean(JSONUtil.parseObj(jsonLoginUserInfo), LoginUserInfo.class);
+        LoginUserInfo loginUserInfo;
+        if (jsonLoginUserInfo instanceof LoginUserInfo) {
+            loginUserInfo = (LoginUserInfo) jsonLoginUserInfo;
+        } else {
+            writeError(response, HttpEnum.UNAUTHORIZED, "登录信息格式错误");
+            return;
+        }
 
-        if (loginUserInfo == null) {
-            writeError(response, HttpEnum.UNAUTHORIZED, "登录已过期，请重新登录");
+        if (!loginUserInfo.isEnabled()) {
+            writeError(response, HttpEnum.UNAUTHORIZED, "登录已过期或账号已被禁用");
             return;
         }
 

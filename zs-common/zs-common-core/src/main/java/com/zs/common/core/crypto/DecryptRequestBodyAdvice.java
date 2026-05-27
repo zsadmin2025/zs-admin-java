@@ -9,7 +9,6 @@ import com.zs.common.core.enums.CryptoTypeEnum;
 import com.zs.common.core.utils.CryptoUtil;
 import com.zs.common.core.utils.SecurityUtil;
 import com.zs.common.redis.config.RedisUtil;
-import io.micrometer.common.lang.NonNullApi;
 import io.micrometer.common.lang.Nullable;
 import jakarta.annotation.Resource;
 import org.springframework.core.MethodParameter;
@@ -29,7 +28,6 @@ import java.util.Objects;
  * 请求参数解密
  */
 @RestControllerAdvice
-@NonNullApi
 public class DecryptRequestBodyAdvice implements RequestBodyAdvice {
 
     @Resource

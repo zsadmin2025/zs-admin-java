@@ -4,6 +4,7 @@ package com.zs.common.core.jmreport;
 import cn.hutool.json.JSONUtil;
 import com.zs.common.core.constant.Constants;
 import com.zs.common.core.exception.ZsException;
+import com.zs.common.core.model.BaseUserInfo;
 import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.utils.JwtUtil;
 import com.zs.common.redis.config.RedisUtil;
@@ -33,7 +34,8 @@ public class JimuReportTokenService implements JmReportTokenServiceI {
         String token = request.getParameter(Constants.ACCESS_TOKEN);
         if (token != null) {
             LoginUserInfo loginUserInfo = parseToken(token);
-            tenantId = String.valueOf(loginUserInfo.getSysUser().getTenantId());
+            BaseUserInfo baseUserInfo = loginUserInfo.getUserInfo();
+            tenantId = String.valueOf(baseUserInfo.getTenantId());
         }
         return token;
     }
@@ -46,7 +48,8 @@ public class JimuReportTokenService implements JmReportTokenServiceI {
         }
         String loginInfo = claims.getSubject();
         Object jsonLoginUserInfo = redisUtil.get(loginInfo);
-        return JSONUtil.toBean(JSONUtil.parseObj(jsonLoginUserInfo), LoginUserInfo.class);
+        return (LoginUserInfo) jsonLoginUserInfo;
+
     }
 
     @Override

@@ -4,8 +4,6 @@ import cn.hutool.captcha.CaptchaUtil;
 import cn.hutool.captcha.LineCaptcha;
 import cn.hutool.captcha.generator.RandomGenerator;
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.http.useragent.UserAgent;
-import cn.hutool.http.useragent.UserAgentUtil;
 import com.zs.common.aop.annotation.LoginLog;
 import com.zs.common.core.constant.RedisConstants;
 import com.zs.common.core.core.HttpEnum;
@@ -13,7 +11,6 @@ import com.zs.common.core.core.Result;
 import com.zs.common.core.exception.ErrorCodeConstants;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.model.LoginUserInfo;
-import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.tenant.TenantContext;
 import com.zs.common.core.utils.CryptoUtil;
 import com.zs.common.core.utils.IpUtils;
@@ -70,29 +67,19 @@ public class LoginServiceImpl implements ILoginService {
             return new Result<TokenVO>().ok(tokenVO);
 
         } catch (AuthenticationException e) {
-            // 认证失败处理
-            return new Result<TokenVO>().error(HttpEnum.INTERNAL_SERVER_ERROR, e.getMessage());
+            log.warn("用户认证失败: {}, 原因: {}", loginParams.getUsername(), e.getMessage());
+            throw new ZsException(ErrorCodeConstants.LOGIN_ERROR.getCode(), e.getMessage());
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            log.error("登录过程中发生未知错误: {}", loginParams.getUsername(), e);
+            throw new ZsException(ErrorCodeConstants.SYSTEM_ERROR.getCode(), e.getMessage());
         }
     }
 
     private TokenVO getTokenVO(HttpServletRequest request, Authentication authentication) {
         LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
 
-        String userAgentString = request.getHeader(HttpHeaders.USER_AGENT);
-        UserAgent userAgent = UserAgentUtil.parse(userAgentString);
-        String ipAddr = IpUtils.getIpAddr(request);
-
-        SysUser sysUser = loginUserInfo.getSysUser();
-        sysUser.setIp(ipAddr);
-        sysUser.setIpAddress(IpUtils.getCityInfo(ipAddr));
-        sysUser.setLoginTime(new Date());
-        sysUser.setBrowser(userAgent.getBrowser().toString());
-        sysUser.setOs(userAgent.getOs().toString());
-
         // 保存加密的key
-        saveCryptoKeyToRedis(request, loginUserInfo.getSysUser());
+//        saveCryptoKeyToRedis(request, loginUserInfo.getSysUser());
 
         // 将登录用户信息写入Redis，JwtAuthenticationTokenFilter会从中读取
         String redisKey = jwtUtil.getLoginInfoKey(loginUserInfo.getUserType(), loginUserInfo.getUserId());
@@ -163,12 +150,12 @@ public class LoginServiceImpl implements ILoginService {
         }
     }
 
-    private void saveCryptoKeyToRedis(HttpServletRequest request, SysUser sysUser) {
-        String cryptoKey = request.getHeader("cryptoKey");
-        if (cryptoKey == null) {
-            throw new ZsException("请求头cryptoKey 不能为空");
-        }
-        String decryptedKey = CryptoUtil.sm2Decrypt(cryptoKey).replace("\"", "");
-        redisUtil.setObject(RedisConstants.SM4_KEY + sysUser.getSysUserId(), decryptedKey);
-    }
+//    private void saveCryptoKeyToRedis(HttpServletRequest request, SysUser sysUser) {
+//        String cryptoKey = request.getHeader("cryptoKey");
+//        if (cryptoKey == null) {
+//            throw new ZsException("请求头cryptoKey 不能为空");
+//        }
+//        String decryptedKey = CryptoUtil.sm2Decrypt(cryptoKey).replace("\"", "");
+//        redisUtil.setObject(RedisConstants.SM4_KEY + sysUser.getSysUserId(), decryptedKey);
+//    }
 }

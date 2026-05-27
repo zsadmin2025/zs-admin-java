@@ -11,7 +11,6 @@ import com.zs.sms.service.SysSmsTemplateService;
 import com.zs.sys.config.domain.vo.SysConfigSmsVO;
 import config.dto.sms.Aliyun;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.Date;
@@ -103,7 +102,6 @@ public class AliyunSendSmsStrategy implements SendSmsStrategy {
 
     }
 
-    @NotNull
     private static SysSmsRecordEntity getSysSmsRecordEntity(SysSmsParams sysSmsParams, String requestId, String bizId, SysSmsTemplateVO sysSmsTemplateVO) {
         SysSmsRecordEntity sysSmsRecordEntity = new SysSmsRecordEntity();
         sysSmsRecordEntity.setRequestId(requestId);

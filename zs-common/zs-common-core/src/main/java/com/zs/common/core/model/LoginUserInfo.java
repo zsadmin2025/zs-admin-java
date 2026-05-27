@@ -3,9 +3,8 @@ package com.zs.common.core.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zs.common.core.enums.UserTypeEnum;
-import com.zs.common.core.model.user.PlatformUserInfo;
-import com.zs.common.core.model.user.SysUser;
 
+import com.zs.common.core.model.user.SysUser;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
@@ -32,9 +31,7 @@ public class LoginUserInfo implements UserDetails {
     // 权限信息
     private Set<String> permissions;
 
-    // 数据权限信息
     private DataPermission dataPermission;
-
 
     // ==================== 构造函数 ====================
 
@@ -49,7 +46,7 @@ public class LoginUserInfo implements UserDetails {
 
     // ==================== 工厂方法 ====================
     //  平台端用户
-    public static LoginUserInfo ofPlatform(PlatformUserInfo user, Set<String> permissions, DataPermission dataPermission) {
+    public static LoginUserInfo ofPlatform(SysUser user, Set<String> permissions,DataPermission dataPermission) {
         return new LoginUserInfo(user, permissions, dataPermission);
     }
     
@@ -65,36 +62,29 @@ public class LoginUserInfo implements UserDetails {
         return userInfo.getUserId();
     }
 
-    // 平台端用户
-    public SysUser getPlatformUser() {
-        if (userInfo instanceof SysUser p) {
-            return p;
-        }
-        throw new IllegalStateException("当前用户不是平台端用户，实际类型: " + getUserType());
-    }
-
-    public SysUser getSysUser() {
-        return getPlatformUser();
-    }
-
-    public String getRealName() {
-        return userInfo.getRealName();
-    }
-
     public Integer getIsAdmin() {
         if (userInfo instanceof SysUser s) {
             return s.getIsAdmin();
         }
-        if (userInfo instanceof PlatformUserInfo p) {
-            return p.getIsAdmin();
+        return null;
+    }
+
+    /**
+     * 获取系统用户对象（平台端用户）
+     * @return SysUser对象，如果当前用户不是平台端用户则返回null
+     */
+    @JsonIgnore
+    public SysUser getSysUser() {
+        if (userInfo instanceof SysUser sysUser) {
+            return sysUser;
         }
         return null;
     }
 
 
-
     @NotNull
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (permissions == null || permissions.isEmpty()) {
             return Collections.emptySet();
@@ -108,7 +98,7 @@ public class LoginUserInfo implements UserDetails {
     @JsonIgnore
     @Override
     public String getPassword() {
-        return userInfo.getPassword();
+        return getSysUser() != null ? getSysUser().getPassword() : null;
     }
 
 

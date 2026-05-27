@@ -68,7 +68,7 @@ public class MyDataPermissionHandler {
         // 获取当前登录用户信息
         LoginUserInfo loginUserInfo = SecurityUtil.getUserInfo();
 
-        if (loginUserInfo == null || loginUserInfo.getSysUser() == null) {
+        if (loginUserInfo == null || loginUserInfo.getUserInfo() == null) {
             logger.warn("未获取到登录用户信息，跳过数据权限过滤");
             return where;
         }
@@ -79,7 +79,7 @@ public class MyDataPermissionHandler {
         }
 
         // 管理员/全部权限：直接返回原始WHERE
-        if (Objects.equals(loginUserInfo.getSysUser().getIsAdmin(), AdminEnum.Admin.getValue())) {
+        if (Objects.equals(loginUserInfo.getIsAdmin(), AdminEnum.Admin.getValue())) {
             return where;
         }
 

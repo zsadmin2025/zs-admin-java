@@ -6,7 +6,7 @@
     import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
     import freemarker.template.Configuration;
     import freemarker.template.Template;
-    import org.jetbrains.annotations.NotNull;
+    import jakarta.validation.constraints.NotNull;
 
     import java.io.ByteArrayOutputStream;
     import java.io.File;

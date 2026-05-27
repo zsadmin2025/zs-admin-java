@@ -1,8 +1,8 @@
 package com.zs.common.core.config;
 
 
-import cn.hutool.json.JSONUtil;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -10,21 +10,14 @@ import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
 import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
-import com.zs.common.core.constant.Constants;
-import com.zs.common.core.constant.RedisConstants;
 import com.zs.common.core.interceptor.TenantInterceptor;
-import com.zs.common.core.model.file.SysConfigFileVO;
-import com.zs.common.redis.config.RedisUtil;
-import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
-import jakarta.validation.constraints.NotNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import java.text.SimpleDateFormat;
@@ -41,50 +34,8 @@ import java.util.TimeZone;
 @Slf4j
 public class WebConfig implements WebMvcConfigurer {
 
-
-
-    @Resource
-    private RedisUtil redisUtil;
-
     @Resource
     private TenantInterceptor tenantInterceptor;
-
-    // 文件上传路径
-    String filePath;
-    // 前缀
-    String prefix;
-
-    @PostConstruct
-    public void init() {
-        try{
-            Object object = redisUtil.get(RedisConstants.SYS_DICT_CONFIG_KEY + Constants.FILE_UPLOAD);
-            if (object == null) {
-                log.warn("Redis 中未找到文件上传路径配置");
-                return;
-            }
-            // 转换为 VO 对象
-            SysConfigFileVO sysConfigFileVO = JSONUtil.toBean(JSONUtil.toJsonStr(object), SysConfigFileVO.class);
-            if (sysConfigFileVO == null || sysConfigFileVO.getLocal() == null) {
-                log.warn("解析文件配置失败：配置对象为空");
-                return;
-            }
-            String path = sysConfigFileVO.getLocal().getPath();
-            String prefix = sysConfigFileVO.getLocal().getPrefix();
-
-            if (path == null || path.trim().isEmpty()) {
-                log.warn("解析文件配置失败：路径为空");
-                return;
-            }
-
-            this.filePath = path;
-            this.prefix = prefix;
-            log.info("成功加载文件路径: {}", path);
-
-        }catch (Exception e){
-            log.error("初始化文件路径配置失败", e);
-        }
-
-    }
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -92,15 +43,9 @@ public class WebConfig implements WebMvcConfigurer {
     }
 
     @Override
-    public void addResourceHandlers(@NotNull ResourceHandlerRegistry registry) {
-        String filePath = this.filePath.endsWith("/") ?  this.filePath : this.filePath + "/";
-        registry.addResourceHandler("/file/**").addResourceLocations("file:" + filePath);
-    }
-
-    @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
 
-// 1. 创建 Jackson 的 ObjectMapper 核心对象
+        // 1. 创建 Jackson 的 ObjectMapper 核心对象
         ObjectMapper objectMapper = new ObjectMapper();
 
         // 2. 基础序列化配置
@@ -112,6 +57,8 @@ public class WebConfig implements WebMvcConfigurer {
         objectMapper.configure(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED, false);
         // 日期不序列化为时间戳，使用文本格式
         objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        // 忽略未知的 JSON 字段，避免反序列化报错
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         // 3. 日期格式配置（兼容传统 Date 和 Java 8 时间类型）
         // 配置传统 Date 类型的序列化格式
