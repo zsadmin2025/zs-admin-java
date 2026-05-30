@@ -5,6 +5,7 @@ import com.qcloud.cos.model.PutObjectRequest;
 import com.qcloud.cos.model.PutObjectResult;
 import com.zs.common.core.model.file.SysConfigFileVO;
 import com.zs.common.core.model.file.Tencent;
+import com.zs.common.core.utils.FileUtils;
 import com.zs.file.domain.entity.SysFileEntity;
 import com.zs.file.manager.COSClientManager;
 import lombok.extern.slf4j.Slf4j;
@@ -40,21 +41,23 @@ public class TencentCloudStrategy implements UploadStrategy {
 
     @Override
     public SysFileEntity upload(MultipartFile file) {
+        String originalFilename = file.getOriginalFilename();
         File localFile = null;
         try {
+            String objectKey = FileUtils.generateObjectKey(originalFilename);
             // 创建临时文件
-            localFile = File.createTempFile("temp", file.getOriginalFilename());
+            localFile = File.createTempFile("temp", originalFilename);
             // 将 MultipartFile 写入临时文件
             file.transferTo(localFile);
 
-            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, file.getOriginalFilename(), localFile);
+            PutObjectRequest putObjectRequest = new PutObjectRequest(bucketName, objectKey, localFile);
             PutObjectResult result = cosClient.putObject(putObjectRequest);
             SysFileEntity sysFileEntity = new SysFileEntity();
-            sysFileEntity.setFileName(file.getOriginalFilename());
-            sysFileEntity.setFileOriginalName(file.getOriginalFilename());
+            sysFileEntity.setFileName(originalFilename);
+            sysFileEntity.setFileOriginalName(originalFilename);
             sysFileEntity.setFileType(file.getContentType());
             sysFileEntity.setFileSize(file.getSize());
-            sysFileEntity.setFileUrl(domain + "/" + file.getOriginalFilename());
+            sysFileEntity.setFileUrl(domain + "/" + objectKey);
             sysFileEntity.setFilePath(result.getRequestId());
 
             // 删除临时文件（可选）
