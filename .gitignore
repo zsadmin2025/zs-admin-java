@@ -44,3 +44,12 @@ out/
 # Logs
 logs/
 *.log.*
+
+
+.claude
+.codegraph
+.github
+.idea
+.lingma
+.vscode
+.CLAUDE.md
