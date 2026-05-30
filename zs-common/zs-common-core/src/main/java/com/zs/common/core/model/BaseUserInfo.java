@@ -1,6 +1,5 @@
 package com.zs.common.core.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.zs.common.core.enums.UserTypeEnum;
 import lombok.Data;
 

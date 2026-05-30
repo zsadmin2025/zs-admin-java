@@ -1,14 +1,10 @@
 package com.zs.common.core.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.model.BaseUserInfo;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-
-import java.util.Date;
 
 
 /**

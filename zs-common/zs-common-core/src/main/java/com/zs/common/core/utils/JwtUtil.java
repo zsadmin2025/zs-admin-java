@@ -7,15 +7,12 @@ import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.model.BaseUserInfo;
 import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.tenant.TenantContext;
-import com.zs.common.redis.config.RedisUtil;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.Nullable;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;

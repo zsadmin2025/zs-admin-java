@@ -1,9 +1,7 @@
 package com.zs.common.security.service;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
 import com.zs.common.core.model.LoginUserInfo;
+import org.springframework.security.core.userdetails.UserDetails;
 
 /**
  * 平台端用户详情服务

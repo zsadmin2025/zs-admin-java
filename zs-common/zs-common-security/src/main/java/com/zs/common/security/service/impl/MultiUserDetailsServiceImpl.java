@@ -1,16 +1,13 @@
 package com.zs.common.security.service.impl;
 
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Service;
-
 import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.tenant.TenantContext;
 import com.zs.common.security.service.CustomUserDetailsService;
 import com.zs.common.security.service.PlatformUserDetailsService;
-
 import jakarta.annotation.Resource;
-import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Service;
 
 /**
  * 平台端用户详情服务实现

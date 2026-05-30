@@ -16,7 +16,6 @@ import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.page.PageInfo;
 import com.zs.common.core.page.PageResult;
-import com.zs.common.security.service.CustomUserDetailsService;
 import com.zs.common.security.service.PlatformUserDetailsService;
 import com.zs.sys.dept.service.ISysDeptService;
 import com.zs.sys.menu.service.ISysMenuService;

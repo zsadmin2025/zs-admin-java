@@ -1,10 +1,9 @@
 package com.zs.common.security.service;
 
 
-import org.springframework.security.core.userdetails.UserDetails;
-
 import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.model.LoginUserInfo;
+import org.springframework.security.core.userdetails.UserDetails;
 
 
 /**

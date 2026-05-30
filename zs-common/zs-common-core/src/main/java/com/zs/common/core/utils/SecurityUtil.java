@@ -3,7 +3,6 @@ package com.zs.common.core.utils;
 
 import com.zs.common.core.enums.AdminEnum;
 import com.zs.common.core.model.LoginUserInfo;
-import com.zs.common.core.model.user.SysUser;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 

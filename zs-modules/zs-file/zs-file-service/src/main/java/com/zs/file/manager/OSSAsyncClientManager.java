@@ -1,7 +1,6 @@
 package com.zs.file.manager;
 
 import com.aliyun.sdk.service.oss2.OSSAsyncClient;
-import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.credentials.Credentials;
 import com.aliyun.sdk.service.oss2.credentials.CredentialsProvider;
 import com.aliyun.sdk.service.oss2.credentials.CredentialsProviderSupplier;

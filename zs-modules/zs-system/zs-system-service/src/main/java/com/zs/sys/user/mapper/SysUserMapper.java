@@ -2,8 +2,8 @@ package com.zs.sys.user.mapper;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
-import com.zs.common.mp.base.DataPermissionMapper;
 import com.zs.common.mp.annotation.DataScope;
+import com.zs.common.mp.base.DataPermissionMapper;
 import com.zs.sys.user.domain.entity.SysUserEntity;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;

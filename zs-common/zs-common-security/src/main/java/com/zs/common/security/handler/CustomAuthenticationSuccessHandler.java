@@ -1,34 +1,22 @@
 package com.zs.common.security.handler;
 
-import cn.hutool.http.useragent.UserAgent;
-import cn.hutool.http.useragent.UserAgentUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.zs.common.aop.annotation.LoginLog;
 import com.zs.common.core.constant.RedisConstants;
-import com.zs.common.core.core.Result;
 import com.zs.common.core.exception.ZsException;
-import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.utils.CryptoUtil;
-import com.zs.common.core.utils.IpUtils;
 import com.zs.common.core.utils.JwtUtil;
 import com.zs.common.redis.config.RedisUtil;
-import com.zs.common.security.model.TokenVO;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * 自定义登录成功处理

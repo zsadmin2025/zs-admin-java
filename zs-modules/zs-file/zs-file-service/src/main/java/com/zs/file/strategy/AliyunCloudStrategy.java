@@ -1,9 +1,6 @@
 package com.zs.file.strategy;
 
-import com.aliyun.oss.OSS;
-
 import com.aliyun.sdk.service.oss2.OSSAsyncClient;
-import com.aliyun.sdk.service.oss2.OSSClient;
 import com.aliyun.sdk.service.oss2.models.PutObjectRequest;
 import com.aliyun.sdk.service.oss2.models.PutObjectResult;
 import com.aliyun.sdk.service.oss2.transport.BinaryData;
@@ -12,13 +9,11 @@ import com.zs.common.core.model.file.SysConfigFileVO;
 import com.zs.common.core.utils.FileUtils;
 import com.zs.file.domain.entity.SysFileEntity;
 import com.zs.file.manager.OSSAsyncClientManager;
-import com.zs.file.manager.OSSClientManager;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.InputStream;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 /**

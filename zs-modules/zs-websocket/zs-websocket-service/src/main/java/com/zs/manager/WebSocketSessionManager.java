@@ -3,7 +3,6 @@ package com.zs.manager;
 import com.alibaba.fastjson.JSON;
 import com.zs.common.core.constant.RedisConstants;
 import com.zs.common.core.model.BaseUserInfo;
-import com.zs.common.core.model.user.SysUser;
 import com.zs.common.redis.config.RedisUtil;
 import jakarta.annotation.Resource;
 import org.springframework.stereotype.Component;

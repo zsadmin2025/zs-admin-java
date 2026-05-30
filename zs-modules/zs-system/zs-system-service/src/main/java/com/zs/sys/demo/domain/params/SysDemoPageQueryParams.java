@@ -1,15 +1,15 @@
 package com.zs.sys.demo.domain.params;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.zs.common.core.page.BasePageParams;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
-import java.io.Serializable;
-import io.swagger.v3.oas.annotations.media.Schema;
-
-import java.util.Date;
 import org.springframework.format.annotation.DateTimeFormat;
-import com.fasterxml.jackson.annotation.JsonFormat;
+
+import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>
