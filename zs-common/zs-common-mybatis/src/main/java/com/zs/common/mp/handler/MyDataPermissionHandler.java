@@ -27,13 +27,16 @@ import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 @Component
 public class MyDataPermissionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MyDataPermissionHandler.class);
-
+    
+    // 改为使用 getMethods()（包含继承方法）+ ConcurrentHashMap 缓存
+    private final Map<String, DataScope> dataScopeCache = new ConcurrentHashMap<>();
 
 
     /**
@@ -201,26 +204,30 @@ public class MyDataPermissionHandler {
      */
     @Nullable
     private DataScope getDataScope(@NotNull String mappedStatementId) {
-        int lastDotIndex = mappedStatementId.lastIndexOf(".");
-        if (lastDotIndex == -1) {
-            logger.warn("无效的mappedStatementId格式: {}", mappedStatementId);
+        return dataScopeCache.computeIfAbsent(mappedStatementId, id -> {
+            int lastDotIndex = id.lastIndexOf(".");
+            if (lastDotIndex == -1) {
+                logger.warn("无效的mappedStatementId格式: {}", id);
+                return null;
+            }
+
+            String className = id.substring(0, lastDotIndex);
+            String methodName = id.substring(lastDotIndex + 1);
+
+            try {
+                Class<?> clazz = Class.forName(className);
+                // ✅ getMethods() 包含本类及继承的全部 public 方法
+                Method method = Arrays.stream(clazz.getMethods())
+                        .filter(m -> m.getName().equals(methodName)
+                                && m.isAnnotationPresent(DataScope.class))
+                        .findFirst()
+                        .orElse(null);
+                return method != null ? method.getAnnotation(DataScope.class) : null;
+            } catch (ClassNotFoundException e) {
+                logger.error("获取mapper类失败", e);
+            }
             return null;
-        }
-
-        String className = mappedStatementId.substring(0, mappedStatementId.lastIndexOf("."));
-        String methodName = mappedStatementId.substring(mappedStatementId.lastIndexOf(".") + 1);
-
-        try {
-            Class<?> clazz = Class.forName(className);
-            Method method = Arrays.stream(clazz.getDeclaredMethods())
-                    .filter(m -> m.getName().equals(methodName))
-                    .findFirst()
-                    .orElse(null);
-            return method != null ? method.getAnnotation(DataScope.class) : null;
-        } catch (ClassNotFoundException e) {
-            logger.error("获取mapper类失败", e);
-        }
-        return null;
+        });
     }
 
 }

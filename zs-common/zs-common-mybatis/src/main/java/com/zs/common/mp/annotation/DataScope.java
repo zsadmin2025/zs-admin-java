@@ -13,7 +13,7 @@ public @interface DataScope {
     String tableAlias() default "";
 
     /** 部门限制范围的字段名称 */
-    String deptField() default "creator_dept";
+    String deptField() default "creator_dept_id";
 
     /** 用户限制范围的字段名称 */
     String userField() default "creator";
