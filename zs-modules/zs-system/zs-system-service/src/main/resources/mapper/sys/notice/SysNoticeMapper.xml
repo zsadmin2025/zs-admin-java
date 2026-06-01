@@ -7,6 +7,7 @@
         select a.*,b.real_name from sys_notice a
         left join sys_user b on a.creator = b.sys_user_id
         <where>
+            a.deleted = 0
             <if test="params.title != '' and params.title != null">
                 AND a.title LIKE CONCAT('%', #{params.title}, '%')
             </if>
@@ -30,6 +31,6 @@
         select a.*, b.real_name
         from sys_notice a
                  left join sys_user b on a.creator = b.sys_user_id
-        where a.sys_notice_id = #{sysNoticeId}
+        where a.sys_notice_id = #{sysNoticeId} AND a.deleted = 0
     </select>
 </mapper>

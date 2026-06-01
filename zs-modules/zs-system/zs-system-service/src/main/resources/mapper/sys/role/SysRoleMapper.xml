@@ -9,7 +9,7 @@
         SELECT a.*
         FROM sys_role a
                  left join sys_user_role b on a.sys_role_id = b.sys_role_id
-        where b.sys_user_id = #{sysUserId}
+        where b.sys_user_id = #{sysUserId} AND a.deleted = 0
     </select>
     <select id="getDataScopeDeptIds" resultType="java.lang.Long">
 

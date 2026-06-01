@@ -29,5 +29,4 @@ public class MemberUserEntity extends BaseEntity {
 
     private Integer status;
 
-    private Integer deleted;
 }

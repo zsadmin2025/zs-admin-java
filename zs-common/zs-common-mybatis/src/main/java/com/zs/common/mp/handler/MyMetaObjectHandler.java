@@ -20,6 +20,8 @@ public class MyMetaObjectHandler implements MetaObjectHandler {
         this.strictInsertFill(metaObject, "createTime", String.class, DateUtil.now());
         // 租户id
         this.strictInsertFill(metaObject, "tenantId", String.class, TenantContext.getTenantId());
+        // 逻辑删除字段，默认值为未删除
+        this.strictInsertFill(metaObject, "deleted", Integer.class, 0);
     }
 
     @Override

@@ -6,14 +6,14 @@
     <select id="getSubDeptIdList" resultType="java.lang.Long">
         select sys_dept_id
         from sys_dept
-        where pids like CONCAT('%', #{sysDeptId}, '%')
+        where pids like CONCAT('%', #{sysDeptId}, '%') AND deleted = 0
     </select>
     <select id="getList" resultType="com.zs.sys.dept.domain.entity.SysDeptEntity">
         select a.*,b.real_name as dept_head_name from sys_dept a
         left join sys_user b on b.sys_user_id = a.dept_head_id
 
         <where>
-            a.status = 1
+            a.status = 1 AND a.deleted = 0
             <if test="deptHeadId != null and deptHeadId != ''">
                 and a.dept_head_id = #{deptHeadId}
             </if>
@@ -27,14 +27,15 @@
         select a.*, b.real_name as dept_head_name
         from sys_dept a
                  left join sys_user b on b.sys_user_id = a.dept_head_id
-        where a.dept_head_id = #{deptHeadId}
+        where a.dept_head_id = #{deptHeadId} AND a.deleted = 0
     </select>
     <select id="page" resultType="com.zs.sys.dept.domain.entity.SysDeptEntity">
         SELECT *
         FROM sys_dept
         <where>
-            <if test="ew != null">
-                ${ew.sqlSegment}
+            deleted = 0
+            <if test="ew != null and ew.sqlSegment != null and ew.sqlSegment != ''">
+                AND ${ew.sqlSegment}
             </if>
         </where>
     </select>

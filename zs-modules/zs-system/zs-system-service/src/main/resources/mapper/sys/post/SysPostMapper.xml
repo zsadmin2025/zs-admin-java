@@ -12,8 +12,9 @@
         sys_post a
         LEFT JOIN sys_dept b ON b.sys_dept_id = a.sys_dept_id
         <where>
+            a.deleted = 0
             <if test="params.status != null">
-                a.status = #{params.status}
+                AND a.status = #{params.status}
             </if>
             <if test="params.postName != null and params.postName != ''">
                 and a.post_name like CONCAT('%',#{params.postName},'%')
@@ -30,6 +31,7 @@
         SELECT a.*,b.dept_name FROM sys_post a
         left join sys_dept b on b.sys_dept_id = a.sys_dept_id
         <where>
+            a.deleted = 0
             <if test="params.status != null and params.status != ''">
                 a.status = #{params.status}
             </if>
