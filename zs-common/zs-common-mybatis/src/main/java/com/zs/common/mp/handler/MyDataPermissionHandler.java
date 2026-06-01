@@ -20,6 +20,7 @@ import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.expression.operators.relational.InExpression;
 import net.sf.jsqlparser.schema.Column;
 import net.sf.jsqlparser.schema.Table;
+import net.sf.jsqlparser.statement.select.FromItem;
 import net.sf.jsqlparser.statement.select.PlainSelect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,8 +35,7 @@ import java.util.stream.Collectors;
 public class MyDataPermissionHandler {
 
     private static final Logger logger = LoggerFactory.getLogger(MyDataPermissionHandler.class);
-    
-    // 改为使用 getMethods()（包含继承方法）+ ConcurrentHashMap 缓存
+
     private final Map<String, DataScope> dataScopeCache = new ConcurrentHashMap<>();
 
 
@@ -52,12 +52,9 @@ public class MyDataPermissionHandler {
             return plainSelect.getWhere(); // 无注解，返回原始WHERE
         }
 
-        // 待执行 SQL Where 条件表达式
         Expression where = plainSelect.getWhere();
-
         return doFilter(plainSelect, where, dataScope);
     }
-
 
 
     /**
@@ -81,124 +78,140 @@ public class MyDataPermissionHandler {
             return where;
         }
 
-        // 管理员/全部权限：直接返回原始WHERE
+        // 管理员：直接返回原始WHERE
         if (Objects.equals(loginUserInfo.getIsAdmin(), AdminEnum.Admin.getValue())) {
             return where;
         }
 
-
         Set<DataScopeEnum> dataScopeTypes = Optional.of(loginUserInfo.getDataPermission())
                 .map(DataPermission::getDataScopeTypes)
                 .orElse(Collections.emptySet());
-        // 无数据权限, 直接返回原始WHERE。 全部权限，跳过数据权限过滤，返回原始WHERE
         if (dataScopeTypes.isEmpty() || dataScopeTypes.contains(DataScopeEnum.ALL)) {
             return where;
         }
 
-        Table table = (Table) plainSelect.getFromItem();
-        String aliasName = getTableAlias(table, dataScope);
-        String depIdColumn = Optional.ofNullable(dataScope.deptField()).orElse(aliasName + ".create_dept_id");
-        String userIdColumn = Optional.ofNullable(dataScope.userField()).orElse(aliasName + ".creator");
+        String aliasName = getTableAlias(plainSelect, dataScope);
+        String depIdColumn = resolveColumn(dataScope.deptField(), aliasName, "creator_dept");
+        String userIdColumn = resolveColumn(dataScope.userField(), aliasName, "creator");
 
+        // 同列 OR 合并为 IN，生成优化后的权限表达式
+        Expression dataScopesExpression = buildPermissionExpression(dataScopeTypes, loginUserInfo, depIdColumn, userIdColumn);
 
-        List<Expression> expressions = dataScopeTypes.stream()
-                .filter(scope -> scope != DataScopeEnum.ALL) // 跳过所有权限
-                .map(scope -> createExpressionForScope(scope, loginUserInfo, depIdColumn, userIdColumn))
-                .filter(Objects::nonNull)
-                .toList();
-
-
-        Expression dataScopesExpression = expressions.stream().reduce(OrExpression::new).orElse(null);
-
-        // 修复后代码
         if (dataScopesExpression == null) {
-            // 无有效数据权限条件，直接返回原始WHERE
             return where;
         }
         return where == null ? dataScopesExpression : new AndExpression(where, new Parenthesis(dataScopesExpression));
-
     }
 
-    private String getTableAlias(Table table, DataScope dataScope) {
+    /**
+     * 解析表别名：优先用注解别名，其次用SQL解析出的别名，最后用表名
+     * 兼容子查询、JOIN等 getFromItem() 不是 Table 类型的场景
+     */
+    private String getTableAlias(PlainSelect plainSelect, DataScope dataScope) {
+        // 注解显式指定了别名 → 直接使用
         String annotationAlias = dataScope.tableAlias();
         if (annotationAlias != null && !annotationAlias.isEmpty()) {
             return annotationAlias;
         }
-        return Optional.ofNullable(table.getAlias())
-                .map(Alias::getName)
-                .orElse(table.getName());
+
+        // 从 SQL 解析别名
+        FromItem fromItem = plainSelect.getFromItem();
+        if (fromItem instanceof Table table) {
+            return Optional.ofNullable(table.getAlias())
+                    .map(Alias::getName)
+                    .orElse(table.getName());
+        }
+
+        // 子查询 / JOIN / UNION 等非标准 Table 场景：不追加别名前缀
+        logger.debug("getFromItem() 不是 Table 类型 ({}), 使用无别名模式", fromItem.getClass().getSimpleName());
+        return "";
     }
 
     /**
-     * 创建特定数据范围的SQL表达式
-     * @param dataScope 数据范围类型
-     * @param loginUserInfo 登录用户信息
-     * @return SQL表达式
+     * 统一解析字段列名：有别名时加前缀，无别名时直接使用列名
+     *
+     * @param fieldValue    注解中设置的字段值（可为空串）
+     * @param aliasName     表别名（可为空串）
+     * @param defaultColumn 默认列名
+     * @return 列引用，"o.creator_dept" 或直接 "creator_dept"
      */
-    private Expression createExpressionForScope(DataScopeEnum dataScope, LoginUserInfo loginUserInfo, String depIdColumn, String userIdColumn) {
-        return switch (dataScope) {
-            case CUSTOM -> createCustomDeptPermissionExpression(loginUserInfo, depIdColumn);
-            case DEPT -> createOwnDeptPermissionExpression(loginUserInfo, depIdColumn);
-            case DEPT_AND_CHILD -> createDeptWithChildrenPermissionExpression(loginUserInfo, depIdColumn);
-            case SELF -> createCreatedByUserPermissionExpression(loginUserInfo,  userIdColumn);
-            default -> null;
-        };
-    }
-
-    // 自定义部门权限表达式
-    @Nullable
-    private Expression createCustomDeptPermissionExpression(LoginUserInfo loginUserInfo, String depIdColumn) {
-        Set<Long> deptIds = loginUserInfo.getDataPermission().getDeptIds();
-        if (deptIds.isEmpty()) {
-            return null;
+    private String resolveColumn(String fieldValue, String aliasName, String defaultColumn) {
+        String field = (fieldValue != null && !fieldValue.isEmpty())
+                ? fieldValue        // 注解显式设置
+                : defaultColumn;    // 兜底默认值
+        if (aliasName != null && !aliasName.isEmpty()) {
+            return aliasName + "." + field;
         }
-        List<Expression> deptIdList = deptIds.stream()
-                .map(LongValue::new)
-                .map(longValue -> (Expression) longValue)
-                .collect(Collectors.toList());
-
-        ExpressionList<Expression> deptIdExpressions = new ExpressionList<>(deptIdList);
-        return new InExpression(new Column(depIdColumn), new Parenthesis(deptIdExpressions));
+        return field;
     }
 
-    // 自己部门权限表达式
-    @NotNull
-    private Expression createOwnDeptPermissionExpression(@NotNull LoginUserInfo loginUserInfo,  String depIdColumn) {
-        return new EqualsTo(
-                new Column(depIdColumn),
-                new LongValue(loginUserInfo.getSysUser().getSysDeptId())
-        );
-    }
-
-    // 部门及子部门权限表达式
+    /**
+     * 构建数据权限 SQL 表达式，将同一列的多个条件合并为一个 IN 表达式
+     *
+     * @param scopeTypes    数据权限类型集合
+     * @param loginUserInfo 登录用户信息
+     * @param depColumn     部门字段列名（含别名）
+     * @param userColumn    用户字段列名（含别名）
+     * @return 优化后的 SQL 表达式
+     */
     @Nullable
-    private Expression createDeptWithChildrenPermissionExpression(LoginUserInfo loginUserInfo, String depIdColumn) {
-        Set<Long> deptIdsWithChildren = loginUserInfo.getDataPermission().getDeptIds();
-        if (deptIdsWithChildren.isEmpty()) {
-            return null;
+    private Expression buildPermissionExpression(Set<DataScopeEnum> scopeTypes,
+                                                  LoginUserInfo loginUserInfo,
+                                                  String depColumn, String userColumn) {
+        Set<Long> deptIds = new LinkedHashSet<>();  // 去重 + 保持插入顺序
+        boolean hasUserCondition = false;
+
+        for (DataScopeEnum scope : scopeTypes) {
+            switch (scope) {
+                case DEPT -> {
+                    Long userDeptId = loginUserInfo.getSysUser() != null
+                            ? loginUserInfo.getSysUser().getSysDeptId() : null;
+                    if (userDeptId != null) {
+                        deptIds.add(userDeptId);
+                    }
+                }
+                case DEPT_AND_CHILD, CUSTOM -> {
+                    DataPermission dp = loginUserInfo.getDataPermission();
+                    if (dp != null && dp.getDeptIds() != null) {
+                        deptIds.addAll(dp.getDeptIds());
+                    }
+                }
+                case SELF -> hasUserCondition = true;
+                case ALL -> { /* ALL 已在外层提前返回，此处不处理 */ }
+            }
         }
 
-        List<Expression> deptIdList = deptIdsWithChildren.stream()
-                .map(LongValue::new)
-                .map(longValue -> (Expression) longValue)  // 显式转换类型
-                .collect(Collectors.toList());
+        List<Expression> parts = new ArrayList<>();
 
-        ExpressionList<Expression> deptIdExpressions = new ExpressionList<>(deptIdList);
-        return new InExpression(new Column(depIdColumn), new Parenthesis(deptIdExpressions));
-    }
+        // 同列合并：多个 dept ID → 一个 IN 表达式
+        if (!deptIds.isEmpty()) {
+            List<Expression> idExprs = deptIds.stream()
+                    .filter(Objects::nonNull)         // 过滤 null 值，防止 LongValue 拆箱 NPE
+                    .map(LongValue::new)
+                    .collect(Collectors.toList());
+            if (!idExprs.isEmpty()) {
+                parts.add(new InExpression(
+                        new Column(depColumn),
+                        new Parenthesis(new ExpressionList<>(idExprs))));
+            }
+        }
 
-    // 本人权限表达式
-    @NotNull
-    private Expression createCreatedByUserPermissionExpression(@NotNull LoginUserInfo loginUserInfo, String userIdColumn) {
-        return new EqualsTo(
-                new Column(userIdColumn),
-                new LongValue(loginUserInfo.getUserId())
-        );
+        if (hasUserCondition) {
+            parts.add(new EqualsTo(
+                    new Column(userColumn),
+                    new LongValue(loginUserInfo.getUserId())));
+        }
+
+        // 不同列之间用 OR 连接
+        return parts.stream().reduce(OrExpression::new).orElse(null);
     }
 
 
     /**
-     * 从类和方法中获取数据范围注解
+     * 从 Mapper 接口获取数据范围注解，两级优先级查找：
+     * ① Mapper 方法级别（反射解析）
+     * ② Mapper 类级别（反射解析）
+     *
      * @param mappedStatementId 映射语句ID
      * @return 数据范围注解
      */
@@ -216,17 +229,28 @@ public class MyDataPermissionHandler {
 
             try {
                 Class<?> clazz = Class.forName(className);
-                // ✅ getMethods() 包含本类及继承的全部 public 方法
+
+                // ① Mapper 方法级别优先
                 Method method = Arrays.stream(clazz.getMethods())
                         .filter(m -> m.getName().equals(methodName)
                                 && m.isAnnotationPresent(DataScope.class))
                         .findFirst()
                         .orElse(null);
-                return method != null ? method.getAnnotation(DataScope.class) : null;
+
+                if (method != null) {
+                    return method.getAnnotation(DataScope.class);
+                }
+
+                // ② Mapper 类级别兜底
+                if (clazz.isAnnotationPresent(DataScope.class)) {
+                    return clazz.getAnnotation(DataScope.class);
+                }
+
+                return null;
             } catch (ClassNotFoundException e) {
-                logger.error("获取mapper类失败", e);
+                logger.error("获取mapper类失败: {}", className, e);
+                return null;
             }
-            return null;
         });
     }
 

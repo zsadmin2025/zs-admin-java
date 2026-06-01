@@ -253,19 +253,25 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         dataPermission.setUserId(sysUser.getSysUserId());
         dataPermission.setDeptId(sysUser.getSysDeptId());
 
+        // 角色ID列表
         Set<Long> roleIds = roles.stream()
                 .map(SysRoleEntity::getSysRoleId)
                 .collect(Collectors.toSet());
+        
+        // 设置角色ID列表
         dataPermission.setRoleIds(roleIds);
 
+        // 数据权限类型列表
         Set<Integer> dataScopeTypes = roles.stream()
                 .map(SysRoleEntity::getDataScope)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
+        // 设置数据权限类型列表
         Set<DataScopeEnum> dataScopeEnumValues = dataScopeTypes.stream()
                 .map(DataScopeEnum::value)
                 .collect(Collectors.toSet());
+        // 设置数据权限类型列表        
         dataPermission.setDataScopeTypes(dataScopeEnumValues);
 
         Set<Long> deptIds = new HashSet<>();

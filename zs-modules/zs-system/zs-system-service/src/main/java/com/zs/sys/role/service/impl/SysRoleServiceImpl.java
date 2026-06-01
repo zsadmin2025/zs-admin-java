@@ -6,6 +6,7 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zs.common.core.events.DataPermissionChangedEvent;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.page.PageInfo;
 import com.zs.common.core.page.PageResult;
@@ -23,9 +24,11 @@ import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
 import org.apache.logging.log4j.util.Strings;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -43,6 +46,8 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleEntity
     private ISysUserRoleService iSysUserRoleService;
     @Resource
     private ISysRoleDeptService iSysRoleDeptService;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     @NotNull
     @Override
@@ -87,8 +92,24 @@ public class SysRoleServiceImpl extends ServiceImpl<SysRoleMapper, SysRoleEntity
             iSysRoleMenuService.save(sysRoleEntity.getSysRoleId(), sysRoleAddParams.getMenuList());
         }
 
+        // 自定义部门变更时发布事件
         if (!sysRoleAddParams.getDeptList().isEmpty()) {
             iSysRoleDeptService.save(sysRoleEntity.getSysRoleId(), sysRoleAddParams.getDeptList());
+            // 发布自定义部门变更事件
+            List<Long> affectedUserIds = iSysUserRoleService.queryByRoleId(sysRoleEntity.getSysRoleId());
+            if (!affectedUserIds.isEmpty()) {
+                eventPublisher.publishEvent(new DataPermissionChangedEvent(
+                        this, DataPermissionChangedEvent.ChangeType.ROLE_DEPT_CHANGED,
+                        new HashSet<>(affectedUserIds)));
+            }
+        }
+
+        // 角色 dataScope 变更，同步受影响用户的缓存
+        List<Long> affectedUserIds = iSysUserRoleService.queryByRoleId(sysRoleEntity.getSysRoleId());
+        if (!affectedUserIds.isEmpty()) {
+            eventPublisher.publishEvent(new DataPermissionChangedEvent(
+                    this, DataPermissionChangedEvent.ChangeType.ROLE_UPDATED,
+                    new HashSet<>(affectedUserIds)));
         }
     }
 

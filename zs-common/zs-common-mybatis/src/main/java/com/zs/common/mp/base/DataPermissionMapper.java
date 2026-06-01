@@ -53,12 +53,10 @@ public interface DataPermissionMapper<T> extends BaseMapper<T> {
 
     Long selectCount(@Param("ew") Wrapper<T> queryWrapper);
 
-    @DataScope
     List<T> selectList(@Param("ew") Wrapper<T> queryWrapper);
 
     void selectList(@Param("ew") Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
 
-    @DataScope
     List<T> selectList(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
 
     void selectList(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
@@ -75,7 +73,6 @@ public interface DataPermissionMapper<T> extends BaseMapper<T> {
 
     <E> void selectObjs(@Param("ew") Wrapper<T> queryWrapper, ResultHandler<E> resultHandler);
 
-    @DataScope
     default <P extends IPage<T>> P selectPage(P page, @Param("ew") Wrapper<T> queryWrapper) {
         page.setRecords(this.selectList(page, queryWrapper));
         return page;

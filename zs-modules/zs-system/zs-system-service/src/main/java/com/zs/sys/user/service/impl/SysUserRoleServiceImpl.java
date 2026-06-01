@@ -2,15 +2,20 @@ package com.zs.sys.user.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zs.common.core.events.DataPermissionChangedEvent;
 import com.zs.sys.user.domain.entity.SysUserRoleEntity;
 import com.zs.sys.user.mapper.SysUserRoleMapper;
 import com.zs.sys.user.service.ISysUserRoleService;
+import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -18,6 +23,10 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUserRoleEntity> implements ISysUserRoleService {
+
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
+
     @Override
     public void saveOrUpdate(Long sysUserId, @NotNull List<Long> sysRoleIdList) {
         // 先删除用户与角色关系
@@ -31,6 +40,11 @@ public class SysUserRoleServiceImpl extends ServiceImpl<SysUserRoleMapper, SysUs
                 baseMapper.insert(sysUserRoleEntity);
             }
         }
+
+        // 发布用户角色关联变更事件
+        eventPublisher.publishEvent(new DataPermissionChangedEvent(
+                this, DataPermissionChangedEvent.ChangeType.USER_ROLE_CHANGED,
+                Set.of(sysUserId)));
     }
 
     @NotNull

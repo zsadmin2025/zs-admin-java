@@ -15,30 +15,37 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityUtil {
 
 
+    @jakarta.annotation.Nullable
     public static LoginUserInfo getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return null;
+        }
         return (LoginUserInfo) authentication.getPrincipal();
     }
 
+    @jakarta.annotation.Nullable
     public static Long getUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getUserId();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null ? userInfo.getUserId() : null;
     }
 
+    @jakarta.annotation.Nullable
     public static String getUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getUsername();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null ? userInfo.getUsername() : null;
     }
 
+    @jakarta.annotation.Nullable
     public static String getRealName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getRealName();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null && userInfo.getSysUser() != null
+                ? userInfo.getSysUser().getRealName() : null;
     }
 
     public static boolean isAdmin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
-        return loginUserInfo.getIsAdmin() == AdminEnum.Admin.getValue();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null && userInfo.getIsAdmin() == AdminEnum.Admin.getValue();
     }
 
 

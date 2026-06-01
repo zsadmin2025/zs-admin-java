@@ -1,7 +1,8 @@
 {
   "permissions": {
     "allow": [
-      "Read(//c/Users/zzss/.m2/**)"
+      "Read(//c/Users/zzss/.m2/**)",
+      "mcp__codegraph__codegraph_trace"
     ]
   }
 }

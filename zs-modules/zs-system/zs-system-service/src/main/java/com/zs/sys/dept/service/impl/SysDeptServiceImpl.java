@@ -8,6 +8,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zs.common.core.core.HttpEnum;
+import com.zs.common.core.events.DataPermissionChangedEvent;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.page.PageInfo;
 import com.zs.common.core.page.PageResult;
@@ -25,9 +26,13 @@ import com.zs.sys.dept.service.ISysDeptService;
 import com.zs.sys.post.domain.params.SysPostQueryParams;
 import com.zs.sys.post.domain.vo.SysPostVO;
 import com.zs.sys.post.service.ISysPostService;
+import com.zs.sys.user.service.ISysUserService;
 import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 
@@ -41,9 +46,16 @@ import java.util.stream.Collectors;
 @Service
 public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDeptEntity> implements ISysDeptService{
 
+    private static final Logger log = LoggerFactory.getLogger(SysDeptServiceImpl.class);
+
     @Resource
     @Lazy
     private ISysPostService sysPostService;
+    @Resource
+    @Lazy
+    private ISysUserService userService;
+    @Resource
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     public PageResult<SysDeptVO> page(SysDeptPageQueryParams sysDeptPageQueryParams) {
@@ -102,6 +114,9 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDeptEntity
         SysDeptEntity sysDeptEntity = BeanUtil.copyProperties(sysOrgAddParams, SysDeptEntity.class);
         sysDeptEntity.setPids(StrUtil.join(",", getTree(sysOrgAddParams)));
         baseMapper.insert(sysDeptEntity);
+
+        // 发布部门变更事件：影响父部门及上级部门下的用户
+        publishDeptChangedEvent(sysDeptEntity.getSysDeptId());
     }
 
     @NotNull
@@ -128,6 +143,8 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDeptEntity
     @Override
     public void update(SysDeptUpdateParams sysDeptUpdateParams) {
         baseMapper.updateById(BeanUtil.copyProperties(sysDeptUpdateParams, SysDeptEntity.class));
+        // 发布部门变更事件
+        publishDeptChangedEvent(sysDeptUpdateParams.getSysDeptId());
     }
 
     @Override
@@ -137,13 +154,39 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDeptEntity
 
     @Override
     public void removeById(Long sysDeptId) {
-        // 查询用户是否绑定部门
         // 查询是否存在子级
         Long count = baseMapper.selectCount(new LambdaQueryWrapper<SysDeptEntity>().eq(SysDeptEntity::getPid, sysDeptId));
         if (count > 0) {
             throw new ZsException(HttpEnum.SUB_DEPT_ERROR);
         }
+        // 删除前发布事件
+        publishDeptChangedEvent(sysDeptId);
         baseMapper.deleteById(sysDeptId);
+    }
+
+    /**
+     * 发布部门变更事件，通知该部门及子部门下所有用户刷新权限缓存
+     */
+    private void publishDeptChangedEvent(Long sysDeptId) {
+        List<Long> deptIds = getSubDeptIdList(sysDeptId);
+        if (deptIds.isEmpty()) {
+            return;
+        }
+        try {
+            List<com.zs.sys.user.domain.vo.SysUserVO> userList = userService.getUserListByDeptId(deptIds);
+            if (userList != null && !userList.isEmpty()) {
+                Set<Long> affectedUserIds = userList.stream()
+                        .map(com.zs.sys.user.domain.vo.SysUserVO::getSysUserId)
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toSet());
+                if (!affectedUserIds.isEmpty()) {
+                    eventPublisher.publishEvent(new DataPermissionChangedEvent(
+                            this, DataPermissionChangedEvent.ChangeType.DEPT_CHANGED, affectedUserIds));
+                }
+            }
+        } catch (Exception e) {
+            log.warn("发布部门变更事件失败: deptId={}", sysDeptId, e);
+        }
     }
 
     @NotNull
