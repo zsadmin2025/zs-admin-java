@@ -33,7 +33,7 @@
         <where>
             a.deleted = 0
             <if test="params.status != null and params.status != ''">
-                a.status = #{params.status}
+                and a.status = #{params.status}
             </if>
             <if test="params.postName != null and params.postName != ''">
                 and a.post_name like CONCAT('%',#{params.postName},'%')

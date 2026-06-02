@@ -27,6 +27,7 @@
         <ip2region.version>2.7.0</ip2region.version>
         <lettuce-core.version>6.5.1.RELEASE</lettuce-core.version>
         <mybatisplus.version>3.5.7</mybatisplus.version>
+        <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
         <fastexcel.version>1.0.0</fastexcel.version>
         <aliyun.oss.v2.version>0.4.0</aliyun.oss.v2.version>
         <aliyun.sms.version>4.2.0</aliyun.sms.version>
@@ -108,6 +109,12 @@
             <groupId>org.mybatis</groupId>
             <artifactId>mybatis-spring</artifactId>
             <version>3.0.3</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <version>${dynamic-datasource.version}</version>
         </dependency>
 
         <!--        <dependency>-->
