@@ -15,38 +15,58 @@
 
     <dependencies>
 
+        <!-- 定时任务 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-quartz</artifactId>
         </dependency>
+
+        <!-- 代码生成 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-generator</artifactId>
         </dependency>
+
+        <!-- 权限 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-common-security</artifactId>
         </dependency>
 
+        <!-- 邮件 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-mail-service</artifactId>
         </dependency>
+
+        <!-- 系统 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-system-service</artifactId>
         </dependency>
+
+        <!-- 文件 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-file-service</artifactId>
         </dependency>
+
+        <!-- 短信 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-sms-service</artifactId>
         </dependency>
+
+        <!-- websocket -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-websocket-service</artifactId>
+        </dependency>
+
+        <!-- bpm -->
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-bpm-service</artifactId>
         </dependency>
 
 
