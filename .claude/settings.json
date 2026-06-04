@@ -2,7 +2,37 @@
   "permissions": {
     "allow": [
       "Read(//c/Users/zzss/.m2/**)",
-      "mcp__codegraph__codegraph_trace"
+      "mcp__codegraph__codegraph_trace",
+      "Bash(mvn clean *)",
+      "Bash(javap -p zs-quartz/target/classes/com/zs/quartz/service/impl/SysJobLogServiceImpl.class)",
+      "Bash(javap -verbose -p zs-quartz/target/classes/com/zs/quartz/service/impl/SysJobLogServiceImpl.class)",
+      "WebSearch",
+      "Bash(mvn dependency:tree -pl zs-admin -Dincludes=org.springdoc:*)",
+      "Bash(curl -s \"http://localhost:8080/api/v3/api-docs\")",
+      "Bash(mvn dependency:tree -pl zs-admin -Dincludes=org.springframework:spring-webmvc)",
+      "Bash(curl -s -o /dev/null -w \"%{http_code}, %{content_type}, size: %{size_download}\" \"http://localhost:8080/api/webjars/knife4j/app.css\")",
+      "Bash(curl -s \"http://localhost:8080/api/webjars/knife4j/app.css\")",
+      "Bash(curl -s \"http://localhost:8080/api/v3/api-docs/swagger-config\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}, size: %{size_download}\" \"http://localhost:8080/api/webjars/knife4j/4.5.0/js/app.c31badf5.js\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}, size: %{size_download}\" \"http://localhost:8080/api/webjars/knife4j/js/app.c31badf5.js\")",
+      "Bash(jar tf *)",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}, size: %{size_download}\" \"http://localhost:8080/api/webjars/css/app.1824bac3.css\")",
+      "Bash(curl -s -o /dev/null -w \"HTTP %{http_code}, size: %{size_download}\" \"http://localhost:8080/api/doc.html\")",
+      "Bash(jar xf *)",
+      "Bash(javap -c -p -classpath /c/Users/zzss/.m2/repository/com/github/xiaoymin/knife4j-openapi3-jakarta-spring-boot-starter/4.5.0/knife4j-openapi3-jakarta-spring-boot-starter-4.5.0.jar com.github.xiaoymin.knife4j.spring.filter.JakartaProductionSecurityFilter)",
+      "Bash(javap -c -p -classpath /c/Users/zzss/.m2/repository/com/github/xiaoymin/knife4j-openapi3-jakarta-spring-boot-starter/4.5.0/knife4j-openapi3-jakarta-spring-boot-starter-4.5.0.jar com.github.xiaoymin.knife4j.spring.configuration.Knife4jAutoConfiguration)",
+      "Bash(mvn dependency:tree -pl zs-admin)",
+      "Bash(git stash *)",
+      "Bash(mvn install *)",
+      "Bash(mvn dependency:tree -pl zs-admin -Dincludes=\"*:flowable*\")",
+      "Bash(mysql -u root -proot -h localhost -e \"SELECT TABLE_NAME FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'zs_admin' AND TABLE_NAME LIKE 'act_%' ORDER BY TABLE_NAME;\")",
+      "Bash(mvn dependency:tree -pl zs-admin -Dincludes=\"*flowable*app*,*flowable*cmmn*,*flowable*dmn*,*flowable*idm*\")",
+      "Bash(cat /tmp/flowable-check/org/flowable/common/db/create/flowable.mysql.create.common.sql)",
+      "Read(//tmp/flowable-check/org/flowable/common/db/create/**)",
+      "Bash(cat /tmp/flowable-check/org/flowable/common/db/upgrade/flowable.mysql.upgradestep.6120.to.6200.common.sql)",
+      "Read(//tmp/flowable-check/org/flowable/common/db/upgrade/**)",
+      "Bash(cd /tmp/flowable-check && jar xf d:/project/zs_project/zs-project-java/zs-admin/target/zs-admin.jar BOOT-INF/lib/flowable-engine-7.1.0.jar && jar xf BOOT-INF/lib/flowable-engine-7.1.0.jar 2>/dev/null && find . -path \"*/create/*mysql*\" -o -path \"*/upgrade/*mysql*common*\" | sort | head -30)",
+      "Read(//tmp/**)"
     ]
   }
 }

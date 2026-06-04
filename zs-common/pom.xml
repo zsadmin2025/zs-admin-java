@@ -36,8 +36,7 @@
         <qiniu.kodo.version>7.19.0</qiniu.kodo.version>
         <knife4j.version>4.5.0</knife4j.version>
         <bcpkix-jdk18on.version>1.78.1</bcpkix-jdk18on.version>
-
-
+        <flowable.version>7.1.0</flowable.version>
     </properties>
 
 
@@ -194,6 +193,33 @@
             <version>2.1.5</version>
         </dependency>
 
+
+        <!-- Flowable 工作流引擎 -->
+<!--        <dependency>-->
+<!--            <groupId>org.flowable</groupId>-->
+<!--            <artifactId>flowable-spring-boot-starter</artifactId>-->
+<!--            <version>${flowable.version}</version>-->
+<!--        </dependency>-->
+
+
+
+
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-bpm-api</artifactId>
+        </dependency>
+
+        <!-- Flowable BPMN 流程引擎 (仅流程引擎，不含App/CMMN/DMN避免多引擎schema冲突) -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter-process</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter-actuator</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
 
     </dependencies>
     <repositories>
