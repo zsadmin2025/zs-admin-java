@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:developer.aliyun.com)",
+      "WebFetch(domain:flowable.me)",
+      "Bash(cd \"d:\\\\project\\\\zs_project\\\\zs-project-java\" && find ~/.m2/repository/org/flowable -name \"bpmn-model-*.jar\" 2>/dev/null | head -3)",
+      "Read(//c/Users/zzss/.m2/repository/org/flowable/**)",
+      "Bash(mvn dependency:tree -pl zs-modules/zs-bpm/zs-bpm-service)",
+      "Bash(find /c/Users/zzss/.m2 -name \"bpmn-model-7.1.0.jar\" 2>/dev/null)",
+      "Read(//c/Users/zzss/.m2/**)",
+      "Bash(mvn test *)"
+    ]
+  }
+}
