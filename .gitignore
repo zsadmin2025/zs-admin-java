@@ -47,10 +47,13 @@ logs/
 
 
 .claude
+.claude/settings.json
 .codegraph
 .github
 .idea
 .lingma
 .qoder
 .vscode
+.vscode/settings.json
 .CLAUDE.md
+
