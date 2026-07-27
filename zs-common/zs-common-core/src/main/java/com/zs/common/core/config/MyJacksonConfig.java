@@ -1,6 +1,7 @@
 package com.zs.common.core.config;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
@@ -26,12 +27,13 @@ public class MyJacksonConfig {
                     .timeZone(TimeZone.getTimeZone("GMT+8"))
                     .featuresToDisable(
                             SerializationFeature.INDENT_OUTPUT,
-                            SerializationFeature.FAIL_ON_EMPTY_BEANS
+                            SerializationFeature.FAIL_ON_EMPTY_BEANS,
+                            DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES
                     )
                     .serializerByType(Long.class, new ToStringSerializer())
                     .serializerByType(Long.TYPE, new ToStringSerializer());
 
-            // 添加 Java 8 时间支持
+            // 添加时间支持
             builder.modules(new JavaTimeModule());
 
             // 设置 JsonInclude.Include.ALWAYS 策略

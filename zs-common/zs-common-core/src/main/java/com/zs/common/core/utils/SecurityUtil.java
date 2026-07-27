@@ -17,29 +17,34 @@ public class SecurityUtil {
 
     public static LoginUserInfo getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || authentication.getPrincipal() == null) {
+            return null;
+        }
         return (LoginUserInfo) authentication.getPrincipal();
     }
 
     public static Long getUserId() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getSysUserId();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null ? userInfo.getUserId() : null;
     }
 
     public static String getUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getUsername();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null ? userInfo.getUsername() : null;
     }
 
     public static String getRealName() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return ((LoginUserInfo) authentication.getPrincipal()).getSysUser().getRealName();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null && userInfo.getSysUser() != null
+                ? userInfo.getSysUser().getRealName() : null;
     }
 
     public static boolean isAdmin() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        LoginUserInfo loginUserInfo = (LoginUserInfo) authentication.getPrincipal();
-        return loginUserInfo.getSysUser().getIsAdmin() == AdminEnum.Admin.getValue();
+        LoginUserInfo userInfo = getUserInfo();
+        return userInfo != null && userInfo.getIsAdmin() == AdminEnum.Admin.getValue();
     }
+
+
 
 
 }

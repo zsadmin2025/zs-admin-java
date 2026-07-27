@@ -13,10 +13,10 @@ import com.zs.common.core.enums.StatusEnum;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.model.DataPermission;
 import com.zs.common.core.model.LoginUserInfo;
-import com.zs.common.core.model.SysUser;
+import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.page.PageInfo;
 import com.zs.common.core.page.PageResult;
-import com.zs.common.security.service.CustomUserDetailsService;
+import com.zs.common.security.service.PlatformUserDetailsService;
 import com.zs.sys.dept.service.ISysDeptService;
 import com.zs.sys.menu.service.ISysMenuService;
 import com.zs.sys.role.domain.entity.SysRoleEntity;
@@ -49,7 +49,7 @@ import java.util.stream.Collectors;
  * @author zsadmin
  */
 @Service
-public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity> implements ISysUserService, CustomUserDetailsService {
+public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity> implements ISysUserService, PlatformUserDetailsService {
 
 
     @Resource
@@ -118,6 +118,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
     public List<SysUserVO> getUserListByPostId(List<Long> sysPostIds) {
         List<SysUserEntity> sysUserList = this.baseMapper.selectList(new LambdaQueryWrapper<SysUserEntity>().in(SysUserEntity::getSysPostId, sysPostIds));
         return BeanUtil.copyToList(sysUserList, SysUserVO.class);
+    }
+
+    @Override
+    public SysUserVO getUserById(Long id) {
+        SysUserEntity sysUserEntity = this.baseMapper.selectById(id);
+        return BeanUtil.copyProperties(sysUserEntity, SysUserVO.class);
     }
 
 
@@ -235,7 +241,7 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         if (Objects.isNull(sysUserEntity)) {
             throw new UsernameNotFoundException("用户不存在");
         }
-        SysUser sysUser = BeanUtil.toBean(sysUserEntity, SysUser.class);
+        SysUser sysUser = toSysUser(sysUserEntity);
 
         // 获取用户的角色
         List<SysRoleEntity> roles = iSysRoleService.findByUserId(sysUserEntity.getSysUserId());
@@ -247,24 +253,31 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
 
 
 
+
     private DataPermission buildDataPermission(SysUser sysUser, List<SysRoleEntity> roles) {
         DataPermission dataPermission = new DataPermission();
         dataPermission.setUserId(sysUser.getSysUserId());
         dataPermission.setDeptId(sysUser.getSysDeptId());
 
+        // 角色ID列表
         Set<Long> roleIds = roles.stream()
                 .map(SysRoleEntity::getSysRoleId)
                 .collect(Collectors.toSet());
+        
+        // 设置角色ID列表
         dataPermission.setRoleIds(roleIds);
 
+        // 数据权限类型列表
         Set<Integer> dataScopeTypes = roles.stream()
                 .map(SysRoleEntity::getDataScope)
                 .filter(Objects::nonNull)
                 .collect(Collectors.toSet());
 
+        // 设置数据权限类型列表
         Set<DataScopeEnum> dataScopeEnumValues = dataScopeTypes.stream()
                 .map(DataScopeEnum::value)
                 .collect(Collectors.toSet());
+        // 设置数据权限类型列表        
         dataPermission.setDataScopeTypes(dataScopeEnumValues);
 
         Set<Long> deptIds = new HashSet<>();
@@ -289,6 +302,24 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         dataPermission.setDeptIds(deptIds);
 
         return dataPermission;
+    }
+
+    @Override
+    public LoginUserInfo loadUserByUsernameAndTenant(String username, String tenantId) {
+        SysUserEntity sysUserEntity = baseMapper.selectByUserNameAndTenant(username, tenantId);
+        if (Objects.isNull(sysUserEntity)) {
+            throw new UsernameNotFoundException("用户不存在");
+        }
+        SysUser sysUser = toSysUser(sysUserEntity);
+        List<SysRoleEntity> roles = iSysRoleService.findByUserId(sysUserEntity.getSysUserId());
+        DataPermission dataPermission = buildDataPermission(sysUser, roles);
+        return new LoginUserInfo(sysUser, getPermissions(sysUserEntity), dataPermission);
+    }
+
+    private SysUser toSysUser(SysUserEntity entity) {
+        SysUser sysUser = BeanUtil.toBean(entity, SysUser.class);
+        sysUser.setUserId(entity.getSysUserId());
+        return sysUser;
     }
 
 }

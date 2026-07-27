@@ -10,6 +10,7 @@ import org.mybatis.spring.MyBatisSystemException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -59,6 +60,15 @@ public class ZsExceptionHandler {
         String message = e.getAllErrors().get(0).getDefaultMessage();
 
         return new Result<>().error(HttpEnum.VALIDATE_ERROR, message);
+    }
+
+    /**
+     * 拦截数据库SQL语法异常
+     */
+    @ExceptionHandler(BadSqlGrammarException.class)
+    public Result<?> handleRuntimeException(@NotNull BadSqlGrammarException e, @NotNull HttpServletRequest request) {
+        logger.error("SQL-Error occurred, requestUri: {}, err: {}", request.getRequestURI(), e.getMessage(), e);
+        return new Result<>().error(HttpEnum.DATABASE_SQL_ERROR);
     }
 
     /**

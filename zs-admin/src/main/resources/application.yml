@@ -25,6 +25,31 @@ spring:
       initialize-schema: never
     auto-startup: true
 
+flowable:
+  # 1. false: 默认值，Flowable 启动时，对比数据库表中保存的版本，如果不匹配。将抛出异常
+  # 2. true: 启动时会对数据库中所有表进行更新操作，如果表存在，不做处理，反之，自动创建表
+  # 3. create_drop: 启动时自动创建表，关闭时自动删除表
+  # 4. drop_create: 启动时，删除旧表，再创建新表
+  database-schema-update: false
+  db-history-used: true # 是否应该使用数据库历史记录
+  check-process-definitions: false # 是否需要自动部署流程定义。设置为 false，禁用 /resources/processes 自动部署 BPMN XML 流程
+  # 1. none: 不保存历史数据
+  # 2. activity: 保存流程实例和任务相关数据
+  # 3. audit: 保存流程实例、任务、变量、任务分配历史数据
+  # 4. full: 保存所有数据
+  history-level: full
+  # ✅ 全局主开关：关闭所有异步/定时 Job（最重要！）
+  async-executor-activate: false
+  # -------------------- REST 跨域（前后端分离必须） --------------------
+  rest:
+    app:
+      cors:
+        enabled: true # 是否完全启用 CORS 请求。如果为 false,其他属性将不起作用
+        allow-credentials: true #  是否在 CORS 请求中包含凭证
+        allowed-origins: "*" # 接受 CORS 请求的逗号分隔 URL
+        allowed-headers: "*" # 在 CORS 请求中允许的逗号分隔 HTTP 头
+        allowed-methods: DELETE,GET,PATCH,POST,PUT # 在 CORS 请求中允许的逗号分隔 HTTP 方法
+        exposed-headers: "*" # 在 CORS 响应中暴露的逗号分隔头列表
 
 # mybatis-plus
 mybatis-plus:
@@ -34,6 +59,9 @@ mybatis-plus:
     db-config:
       #主键类型  AUTO:"数据库ID自增", INPUT:"用户输入ID", ID_WORKER:"全局唯一ID (数字类型唯一ID)", UUID:"全局唯一ID UUID";
       id-type: assign_id
+      logic-delete-field: deleted # 全局逻辑删除字段名(deleted为实体类属性名称)
+      logic-delete-value: 1 # 逻辑已删除值。可选，默认值为 1
+      logic-not-delete-value: 0 # 逻辑未删除值。可选，默认值为 0
     # 控制台是否开启mybatis-plus logo
     banner: false
   configuration:
@@ -71,20 +99,28 @@ tenant:
 security:
   white:
     url:
-      - /auth/login
       - /auth/captcha
-      #- /auth/logout
-      - /actuator/** # 允许访问执行器端点
-      - /instances/** # 允许访问 Spring Boot Admin 实例
-      - /assets/** # 允许访问静态资产（CSS、JS 等）
-      - /druid/**
+      - /auth/login
       - /system/sys/tenant/select
       - /system/sys/config/website
+      - /member/auth/captcha
+      - /member/auth/login
+      - /file/**
+      - /actuator/** # 允许访问执行器端点
+      - /instances/** # 允许访问 Spring Boot Admin 实例
+      - /druid/**
       - /doc.html
       - /websocket/**
       - /jmreport/**
+      - /ws/** # WebSocket SockJS 握手
       - /favicon.ico
-      - /file/**
+      - /v3/api-docs
+      - /v3/api-docs/** # Swagger API 文档
+      - /webjars/** # Swagger 静态资源
+      - /swagger-resources/**
+      - /swagger-ui/** # Swagger UI 页面
+      - /flowable-ui
+      - /flowable/**
 jwt:
   # 密钥 长度256
   secret: QxXJ18vaaiH0781h6rzMurcyJNzcGtsWYfzc/OyqKBI=
@@ -96,6 +132,8 @@ springdoc:
     tags-sorter: alpha
     operations-sorter: alpha
   packages-to-scan: com.zs
+
+
 knife4j:
   # 开启增强配置
   enable: true

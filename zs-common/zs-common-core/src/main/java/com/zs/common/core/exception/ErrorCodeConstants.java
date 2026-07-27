@@ -2,6 +2,8 @@ package com.zs.common.core.exception;
 
 public interface ErrorCodeConstants {
 
+    ErrorCode LOGIN_ERROR = new ErrorCode(401, "登录失败");
+   ErrorCode SYSTEM_ERROR = new ErrorCode(500, "系统错误");
     ErrorCode CAPTCHA_ERROR = new ErrorCode(10001, "验证码错误");
 
     ErrorCode USER_NOT_EXIST = new ErrorCode(10002, "用户不存在");

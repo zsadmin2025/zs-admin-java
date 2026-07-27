@@ -2,46 +2,93 @@ package com.zs.common.core.model;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.zs.common.core.enums.UserTypeEnum;
+
+import com.zs.common.core.model.user.SysUser;
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
  * @author zsadmin
+ * 登录用户信息
  */
+@Data
 public class LoginUserInfo implements UserDetails {
 
-    @Setter
-    @Getter
-    public SysUser sysUser;
 
-    @Setter
-    @Getter
+    // 登录用户基础信息
+    private BaseUserInfo userInfo;
+
+    // 权限信息
     private Set<String> permissions;
 
-    @Setter
-    @Getter
     private DataPermission dataPermission;
 
+    // ==================== 构造函数 ====================
 
-    public LoginUserInfo(SysUser sysUser, Set<String> permissions, DataPermission dataPermission) {
-        this.sysUser = sysUser;
+    public LoginUserInfo() {
+    }
+    
+    public LoginUserInfo(BaseUserInfo userInfo, Set<String> permissions, DataPermission dataPermission) {
+        this.userInfo = userInfo;
         this.permissions = permissions;
         this.dataPermission = dataPermission;
+    }
+
+    // ==================== 工厂方法 ====================
+    //  平台端用户
+    public static LoginUserInfo ofPlatform(SysUser user, Set<String> permissions,DataPermission dataPermission) {
+        return new LoginUserInfo(user, permissions, dataPermission);
+    }
+    
+
+
+    // ==================== 类型安全获取方法 ====================
+
+    public UserTypeEnum getUserType() {
+        return userInfo.getUserType();
+    }
+
+    public Long getUserId() {
+        return userInfo.getUserId();
+    }
+
+    public Integer getIsAdmin() {
+        if (userInfo instanceof SysUser s) {
+            return s.getIsAdmin();
+        }
+        return null;
+    }
+
+    /**
+     * 获取系统用户对象（平台端用户）
+     * @return SysUser对象，如果当前用户不是平台端用户则返回null
+     */
+    @JsonIgnore
+    public SysUser getSysUser() {
+        if (userInfo instanceof SysUser sysUser) {
+            return sysUser;
+        }
+        return null;
     }
 
 
     @NotNull
     @Override
+    @JsonIgnore
     public Collection<? extends GrantedAuthority> getAuthorities() {
+        if (permissions == null || permissions.isEmpty()) {
+            return Collections.emptySet();
+        }
         return permissions.stream()
                 .filter(Objects::nonNull) // 确保权限字符串不为 null
                 .filter(permission -> !permission.trim().isEmpty()) // 确保权限字符串不为空或仅包含空白字符
@@ -51,19 +98,19 @@ public class LoginUserInfo implements UserDetails {
     @JsonIgnore
     @Override
     public String getPassword() {
-        return sysUser.getPassword();
+        return getSysUser() != null ? getSysUser().getPassword() : null;
     }
 
 
     @JsonIgnore
     @Override
     public String getUsername() {
-        return sysUser.getUsername();
+        return userInfo.getUsername();
     }
 
     @JsonIgnore
     public Long getSysUserId() {
-        return sysUser.getSysUserId();
+        return userInfo.getUserId();
     }
 
     /**
@@ -71,7 +118,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     /**
@@ -79,7 +126,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     /**
@@ -87,7 +134,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     /**
@@ -95,7 +142,7 @@ public class LoginUserInfo implements UserDetails {
      */
     @Override
     public boolean isEnabled() {
-        return sysUser.getStatus() == 1;
+        return userInfo != null && userInfo.isEnabled();
     }
 
 }

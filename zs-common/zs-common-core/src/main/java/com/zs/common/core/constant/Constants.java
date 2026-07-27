@@ -37,6 +37,17 @@ public class Constants {
     public static final String LOGIN_INFO = "sys_login_info:";
 
     /**
+     * 会员登录信息
+     **/
+    public static final String MEMBER_LOGIN_INFO = "member_login_info:";
+
+    
+    /**
+     * 陪诊师登录信息
+     **/
+    public static final String COMPANION_LOGIN_INFO = "companion_login_info:";
+
+    /**
      *  access_token
      */
     public static final String ACCESS_TOKEN = "token";
@@ -65,4 +76,4 @@ public class Constants {
      * 短信发送
      **/
     public static final String SYS_CONFIG_SMS = "sys_config_sms";
-}
+   }

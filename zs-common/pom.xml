@@ -27,16 +27,16 @@
         <ip2region.version>2.7.0</ip2region.version>
         <lettuce-core.version>6.5.1.RELEASE</lettuce-core.version>
         <mybatisplus.version>3.5.7</mybatisplus.version>
+        <dynamic-datasource.version>4.3.1</dynamic-datasource.version>
         <fastexcel.version>1.0.0</fastexcel.version>
-        <aliyun.oss.version>3.17.3</aliyun.oss.version>
+        <aliyun.oss.v2.version>0.4.0</aliyun.oss.v2.version>
         <aliyun.sms.version>4.2.0</aliyun.sms.version>
         <tencent.cos_api.version>5.6.257</tencent.cos_api.version>
         <huawei.obs.version>3.25.7</huawei.obs.version>
         <qiniu.kodo.version>7.19.0</qiniu.kodo.version>
         <knife4j.version>4.5.0</knife4j.version>
         <bcpkix-jdk18on.version>1.78.1</bcpkix-jdk18on.version>
-
-
+        <flowable.version>7.1.0</flowable.version>
     </properties>
 
 
@@ -110,6 +110,12 @@
             <version>3.0.3</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>dynamic-datasource-spring-boot3-starter</artifactId>
+            <version>${dynamic-datasource.version}</version>
+        </dependency>
+
         <!--        <dependency>-->
         <!--            <groupId>p6spy</groupId>-->
         <!--            <artifactId>p6spy</artifactId>-->
@@ -130,29 +136,14 @@
 
 
         <!--阿里云oss-->
+        <!-- Source: https://mvnrepository.com/artifact/com.aliyun/alibabacloud-oss-v2 -->
         <dependency>
-            <groupId>com.aliyun.oss</groupId>
-            <artifactId>aliyun-sdk-oss</artifactId>
-            <version>${aliyun.oss.version}</version>
+            <groupId>com.aliyun</groupId>
+            <artifactId>alibabacloud-oss-v2</artifactId>
+            <version>${aliyun.oss.v2.version}</version>
+            <scope>compile</scope>
         </dependency>
-        <!-- java 9以上， 添加如下-->
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1.1</version>
-        </dependency>
-        <!-- no more than 2.3.3-->
-        <dependency>
-            <groupId>org.glassfish.jaxb</groupId>
-            <artifactId>jaxb-runtime</artifactId>
-            <version>2.3.3</version>
-        </dependency>
-
+       
         <!-- 腾讯云cos  -->
         <dependency>
             <groupId>com.qcloud</groupId>
@@ -202,6 +193,33 @@
             <version>2.1.5</version>
         </dependency>
 
+
+        <!-- Flowable 工作流引擎 -->
+<!--        <dependency>-->
+<!--            <groupId>org.flowable</groupId>-->
+<!--            <artifactId>flowable-spring-boot-starter</artifactId>-->
+<!--            <version>${flowable.version}</version>-->
+<!--        </dependency>-->
+
+
+
+
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-bpm-api</artifactId>
+        </dependency>
+
+        <!-- Flowable BPMN 流程引擎 (仅流程引擎，不含App/CMMN/DMN避免多引擎schema冲突) -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter-process</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-spring-boot-starter-actuator</artifactId>
+            <version>${flowable.version}</version>
+        </dependency>
 
     </dependencies>
     <repositories>

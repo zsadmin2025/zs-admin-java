@@ -1,12 +1,12 @@
 package com.zs.common.security.config;
 
 
+import com.zs.common.core.propetties.WhiteUrlProperties;
 import com.zs.common.security.filter.JwtAuthenticationTokenFilter;
 import com.zs.common.security.handler.CustomAccessDeniedHandler;
 import com.zs.common.security.handler.CustomAuthenticationEntryPoint;
 import com.zs.common.security.handler.CustomAuthenticationFailureHandler;
 import com.zs.common.security.handler.CustomLogoutSuccessHandler;
-import com.zs.common.security.propetties.WhiteUrlProperties;
 import com.zs.common.security.provider.UserNameAuthenticationProvider;
 import jakarta.annotation.Resource;
 import jakarta.validation.constraints.NotNull;
@@ -27,7 +27,6 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -78,11 +77,7 @@ public class WebSecurityConfig {
 
         List<String> whiteUrl = whiteUrlProperties.getUrl();
         String[] urls = whiteUrl.toArray(new String[0]);
-
-        System.out.println("White List URLs: " + Arrays.toString(urls));
         http
-
-
                 .formLogin(formLogin ->
                         formLogin
 //                        .successHandler(customAuthenticationSuccessHandler)

@@ -6,6 +6,7 @@
     <select id="getList" resultType="com.zs.sys.menu.domain.entity.SysMenuEntity">
         select *
         from sys_menu
+        where deleted = 0
     </select>
     <select id="getPermissions" resultType="com.zs.sys.menu.domain.entity.SysMenuEntity">
         SELECT a.*
@@ -13,19 +14,18 @@
                  LEFT JOIN sys_role_menu b ON b.sys_menu_id = a.sys_menu_id
                  LEFT JOIN sys_user_role c ON c.sys_role_id = b.sys_role_id
         WHERE c.sys_user_id = #{sysUserId}
-          and a.type in (3)
+          and a.type in (3) AND a.deleted = 0
 
     </select>
         <select id="getMenuList" resultType="com.zs.sys.menu.domain.entity.SysMenuEntity">
-        SELECT a.*
+        SELECT DISTINCT a.*
         FROM `sys_menu` a
                  LEFT JOIN sys_role_menu b ON b.sys_menu_id = a.sys_menu_id
                  LEFT JOIN sys_user_role c ON c.sys_role_id = b.sys_role_id
-        WHERE a.status = 1 and c.sys_user_id = #{sysUserId}
-          and a.type in (1, 2, 4,5)
-        order by a.sort
-
-
+        WHERE a.status = 1 AND a.deleted = 0
+          AND a.type IN (1, 2, 4, 5)
+          AND (c.sys_user_id = #{sysUserId} OR a.requires_auth = 0)
+        ORDER BY a.sort
     </select>
 
 </mapper>

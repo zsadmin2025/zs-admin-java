@@ -4,13 +4,12 @@ package com.zs.sys.demo.domain.entity;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.zs.common.core.model.BaseEntity;
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 
-import io.swagger.v3.oas.annotations.media.Schema;
-import java.util.Date;
-
 import java.math.BigDecimal;
+import java.util.Date;
 
 /**
  * <p>

@@ -132,7 +132,7 @@ public class LogAspect {
     @NotNull
     private SysLogOperationAddParams createLogOperationParams(@NotNull Log annotation, @NotNull HttpServletRequest request, String params, @NotNull Result<?> result) {
         SysLogOperationAddParams addParams = new SysLogOperationAddParams();
-        addParams.setUsername(SecurityUtil.getUserInfo().getSysUser().getUsername());
+        addParams.setUsername(SecurityUtil.getUserInfo().getUsername());
         addParams.setModule(annotation.module());
         addParams.setIpAddress(IpUtils.getIpAddr(request));
         addParams.setOperationType(annotation.type().toString());
@@ -153,7 +153,7 @@ public class LogAspect {
     @NotNull
     private SysLogErrorAddParams createLogErrorParams(@NotNull Log annotation, @NotNull HttpServletRequest request, String params, @NotNull Exception e) {
         SysLogErrorAddParams addParams = new SysLogErrorAddParams();
-        addParams.setUsername(SecurityUtil.getUserInfo().getSysUser().getUsername());
+        addParams.setUsername(SecurityUtil.getUserInfo().getUserInfo().getUsername());
         addParams.setModule(annotation.module());
         addParams.setIpAddress(IpUtils.getIpAddr(request));
         addParams.setExceptionType(e.getClass().getName());

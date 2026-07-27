@@ -11,44 +11,62 @@
     <artifactId>zs-admin</artifactId>
     <description>系统模块</description>
     <packaging>jar</packaging>
-    <properties>
-        <java.version>17</java.version>
-    </properties>
+
 
     <dependencies>
 
+        <!-- 定时任务 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-quartz</artifactId>
         </dependency>
+
+        <!-- 代码生成 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-generator</artifactId>
         </dependency>
+
+        <!-- 权限 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-common-security</artifactId>
         </dependency>
 
+        <!-- 邮件 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-mail-service</artifactId>
         </dependency>
+
+        <!-- 系统 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-system-service</artifactId>
         </dependency>
+
+        <!-- 文件 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-file-service</artifactId>
         </dependency>
+
+        <!-- 短信 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-sms-service</artifactId>
         </dependency>
+
+        <!-- websocket -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-websocket-service</artifactId>
+        </dependency>
+
+        <!-- bpm -->
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-bpm-service</artifactId>
         </dependency>
 
 
@@ -72,22 +90,9 @@
                     </execution>
                 </executions>
             </plugin>
-<!--            <plugin>-->
-<!--                <groupId>org.apache.maven.plugins</groupId>-->
-<!--                <artifactId>maven-war-plugin</artifactId>-->
-<!--                <version>3.4.0</version>-->
-<!--                <configuration>-->
-<!--                    <failOnMissingWebXml>false</failOnMissingWebXml>-->
-<!--                    <warName>${project.artifactId}</warName>-->
-<!--                </configuration>-->
-<!--            </plugin>-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>17</source>
-                    <target>17</target>
-                </configuration>
             </plugin>
         </plugins>
     </build>

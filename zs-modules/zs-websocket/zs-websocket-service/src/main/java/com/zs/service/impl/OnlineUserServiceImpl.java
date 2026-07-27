@@ -3,7 +3,7 @@ package com.zs.service.impl;
 
 import cn.hutool.json.JSONUtil;
 import com.zs.common.core.constant.RedisConstants;
-import com.zs.common.core.model.SysUser;
+import com.zs.common.core.model.user.SysUser;
 import com.zs.common.core.page.PageResult;
 import com.zs.common.core.tenant.TenantContext;
 import com.zs.common.redis.config.RedisUtil;

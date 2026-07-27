@@ -36,7 +36,7 @@ public class WebSocketEventListener {
         StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
         LoginUserInfo loginUserInfo = getUserFromHeaders(accessor); // 从 token 或 principal 获取
         if (loginUserInfo != null) {
-            webSocketSessionManager.addUser(accessor.getSessionId(), loginUserInfo.getSysUser());
+            webSocketSessionManager.addUser(accessor.getSessionId(), loginUserInfo.getUserInfo());
         }
     }
 

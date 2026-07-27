@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.sys.member.mapper.MemberUserMapper">
+
+    <select id="selectByPhone" resultType="com.zs.sys.member.domain.entity.MemberUserEntity">
+        SELECT *
+        FROM member_user
+        WHERE phone = #{phone}
+          AND deleted = 0
+        LIMIT 1
+    </select>
+
+    <select id="selectByPhoneAndTenant" resultType="com.zs.sys.member.domain.entity.MemberUserEntity">
+        SELECT *
+        FROM member_user
+        WHERE phone = #{phone}
+          AND tenant_id = #{tenantId}
+          AND deleted = 0
+        LIMIT 1
+    </select>
+
+</mapper>

@@ -8,9 +8,8 @@ import com.zs.common.redis.config.RedisUtil;
 import com.zs.model.TenantAwarePrincipal;
 import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
+import jakarta.validation.constraints.NotNull;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.MessageChannel;
@@ -74,7 +73,7 @@ public class AuthChannelInterceptor implements ChannelInterceptor {
 
     }
 
-    @Nullable
+
     private LoginUserInfo getLoginUserInfo(String token) {
         Claims claims = jwtUtil.parseToken(token);
         if (claims == null) {

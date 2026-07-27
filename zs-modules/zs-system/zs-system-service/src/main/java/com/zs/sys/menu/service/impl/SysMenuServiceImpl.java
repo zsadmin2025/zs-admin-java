@@ -64,10 +64,10 @@ public class SysMenuServiceImpl extends ServiceImpl<SysMenuMapper, SysMenuEntity
     public List<SysMenuVO> getNavList() {
         LoginUserInfo loginUserInfo = SecurityUtil.getUserInfo();
         List<SysMenuEntity> list;
-        if (loginUserInfo.sysUser.getIsAdmin() == AdminEnum.Admin.getValue()) {
+        if (loginUserInfo.getIsAdmin() == AdminEnum.Admin.getValue()) {
             list = baseMapper.selectList(new LambdaQueryWrapper<SysMenuEntity>().eq(SysMenuEntity::getStatus, 1).eq(SysMenuEntity::getVisible, 1).in(SysMenuEntity::getType, 1, 2, 4, 5).orderByAsc(SysMenuEntity::getSort));
         } else {
-            list = baseMapper.getMenuList(loginUserInfo.sysUser.getSysUserId());
+            list = baseMapper.getMenuList(loginUserInfo.getSysUserId());
         }
 
 

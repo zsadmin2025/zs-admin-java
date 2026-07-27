@@ -3,11 +3,11 @@ package com.zs.sys.demo.service;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zs.common.core.page.PageResult;
 import com.zs.sys.demo.domain.entity.SysDemoEntity;
-import com.zs.sys.demo.domain.vo.SysDemoVO;
+import com.zs.sys.demo.domain.params.SysDemoAddParams;
 import com.zs.sys.demo.domain.params.SysDemoPageQueryParams;
 import com.zs.sys.demo.domain.params.SysDemoSelectQueryParams;
-import com.zs.sys.demo.domain.params.SysDemoAddParams;
 import com.zs.sys.demo.domain.params.SysDemoUpdateParams;
+import com.zs.sys.demo.domain.vo.SysDemoVO;
 
 import java.util.List;
 

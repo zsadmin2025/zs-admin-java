@@ -1,4 +1,4 @@
-package com.zs.common.security.propetties;
+package com.zs.common.core.propetties;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

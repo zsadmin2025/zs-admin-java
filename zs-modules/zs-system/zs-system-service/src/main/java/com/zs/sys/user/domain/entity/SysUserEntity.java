@@ -30,7 +30,6 @@ public class SysUserEntity extends BaseEntity {
     private Long sysDeptId;
     private Long sysPostId;
     private Integer status;
-    private Integer deleted;
 
     @TableField(exist = false)
     private String deptName;

@@ -4,7 +4,6 @@ import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
-import com.zs.common.mp.annotation.DataScope;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.exceptions.TooManyResultsException;
 import org.apache.ibatis.session.ResultHandler;
@@ -53,12 +52,10 @@ public interface DataPermissionMapper<T> extends BaseMapper<T> {
 
     Long selectCount(@Param("ew") Wrapper<T> queryWrapper);
 
-    @DataScope
     List<T> selectList(@Param("ew") Wrapper<T> queryWrapper);
 
     void selectList(@Param("ew") Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
 
-    @DataScope
     List<T> selectList(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper);
 
     void selectList(IPage<T> page, @Param("ew") Wrapper<T> queryWrapper, ResultHandler<T> resultHandler);
@@ -75,7 +72,6 @@ public interface DataPermissionMapper<T> extends BaseMapper<T> {
 
     <E> void selectObjs(@Param("ew") Wrapper<T> queryWrapper, ResultHandler<E> resultHandler);
 
-    @DataScope
     default <P extends IPage<T>> P selectPage(P page, @Param("ew") Wrapper<T> queryWrapper) {
         page.setRecords(this.selectList(page, queryWrapper));
         return page;

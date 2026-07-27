@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>com.zs</groupId>
+        <artifactId>zs-bpm</artifactId>
+        <version>1.0.0</version>
+    </parent>
+
+    <artifactId>zs-bpm-service</artifactId>
+
+    <dependencies>
+        <!-- JUnit 4 支持 -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-common-aop</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-common-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-common-mybatis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-common-redis</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-common-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-bpm-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- 系统模块 - 用户/角色/岗位/部门服务 -->
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-system-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Flowable BPMN 自动布局 -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-bpmn-layout</artifactId>
+            <version>7.1.0</version>
+        </dependency>
+    </dependencies>
+</project>

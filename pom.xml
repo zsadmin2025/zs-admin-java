@@ -13,7 +13,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>3.3.13</version>
         <relativePath/>
     </parent>
 
@@ -37,6 +37,7 @@
         <module>zs-modules/zs-sms</module>
         <module>zs-modules/zs-system</module>
         <module>zs-modules/zs-websocket</module>
+        <module>zs-modules/zs-bpm</module>
 
     </modules>
 
@@ -78,6 +79,7 @@
                 <artifactId>zs-common-websocket</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
 
             <!-- 定时任务 -->
             <dependency>
@@ -138,6 +140,8 @@
                 <artifactId>zs-system-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- websocket模块 -->
             <dependency>
                 <groupId>com.zs</groupId>
                 <artifactId>zs-websocket-service</artifactId>
@@ -148,12 +152,27 @@
                 <artifactId>zs-websocket-api</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
+            <!-- 业务流程管理 -->
+            <dependency>
+                <groupId>com.zs</groupId>
+                <artifactId>zs-bpm-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zs</groupId>
+                <artifactId>zs-bpm-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+
             <!-- 代码生成 -->
             <dependency>
                 <groupId>com.zs</groupId>
                 <artifactId>zs-generator</artifactId>
                 <version>${project.version}</version>
             </dependency>
+
         </dependencies>
     </dependencyManagement>
 

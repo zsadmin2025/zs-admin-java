@@ -4,6 +4,7 @@ package com.zs.file.strategy;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.model.file.Local;
 import com.zs.common.core.model.file.SysConfigFileVO;
+import com.zs.common.core.utils.FileUtils;
 import com.zs.file.domain.entity.SysFileEntity;
 import com.zs.file.service.ISysFileService;
 import jakarta.annotation.Resource;
@@ -18,7 +19,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 /**
  *
@@ -67,16 +67,8 @@ public class LocalFileStrategy implements UploadStrategy {
             if (originalFilename == null || originalFilename.trim().isEmpty()) {
                 throw new ZsException("文件名为空");
             }
-
-            String extension = "";
-            int dotIndex = originalFilename.lastIndexOf(".");
-            // 避免空字符串或纯扩展名的情况
-            if (dotIndex > 0 && dotIndex < originalFilename.length() - 1) {
-                extension = originalFilename.substring(dotIndex);
-            }
-
             // 生成新文件名
-            newFileName = UUID.randomUUID().toString().replace("-", "") + extension;
+            newFileName = FileUtils.generateUniqueFileName(originalFilename);
 
             // 构建文件路径
             Path filePath = Paths.get(FILE_PATH, newFileName);
