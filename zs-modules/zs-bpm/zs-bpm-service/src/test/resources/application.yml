@@ -1,0 +1,30 @@
+spring:
+  datasource:
+    dynamic:
+      enabled: true
+      primary: master
+      datasource:
+        master:
+          driver-class-name: com.mysql.cj.jdbc.Driver
+          url: jdbc:mysql://localhost:3306/zs_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&nullCatalogMeansCurrent=true&allowPublicKeyRetrieval=true
+          username: root
+          password: root
+
+flowable:
+  # 测试中只需 Process Engine，禁用 CMMN/DMN/App/EventRegistry 子引擎，避免缺失子引擎表导致启动失败
+  database-schema-update: true
+  db-history-used: true
+  check-process-definitions: false
+  history-level: full
+  cmmn:
+    enabled: false
+  dmn:
+    enabled: false
+  app:
+    enabled: false
+  event-registry:
+    enabled: false
+
+# 多租户
+tenant:
+  enable: false

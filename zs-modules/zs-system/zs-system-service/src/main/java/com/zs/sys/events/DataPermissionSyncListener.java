@@ -7,8 +7,8 @@ import com.zs.common.core.events.DataPermissionChangedEvent;
 import com.zs.common.core.model.DataPermission;
 import com.zs.common.core.model.LoginUserInfo;
 import com.zs.common.core.model.user.SysUser;
-import com.zs.common.redis.config.RedisUtil;
 import com.zs.common.core.utils.JwtUtil;
+import com.zs.common.redis.config.RedisUtil;
 import com.zs.sys.dept.service.ISysDeptService;
 import com.zs.sys.menu.service.ISysMenuService;
 import com.zs.sys.role.domain.entity.SysRoleEntity;
@@ -21,7 +21,10 @@ import org.springframework.context.event.EventListener;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 

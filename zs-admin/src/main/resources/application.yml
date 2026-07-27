@@ -33,7 +33,13 @@ flowable:
   database-schema-update: false
   db-history-used: true # 是否应该使用数据库历史记录
   check-process-definitions: false # 是否需要自动部署流程定义。设置为 false，禁用 /resources/processes 自动部署 BPMN XML 流程
-  history-level: full # 需要使用的历史级别。full：保存历史数据的最高级别，可保存全部流程相关细节，包括流程流转各节点参数
+  # 1. none: 不保存历史数据
+  # 2. activity: 保存流程实例和任务相关数据
+  # 3. audit: 保存流程实例、任务、变量、任务分配历史数据
+  # 4. full: 保存所有数据
+  history-level: full
+  # ✅ 全局主开关：关闭所有异步/定时 Job（最重要！）
+  async-executor-activate: false
   # -------------------- REST 跨域（前后端分离必须） --------------------
   rest:
     app:

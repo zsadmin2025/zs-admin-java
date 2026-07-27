@@ -51,5 +51,6 @@ logs/
 .github
 .idea
 .lingma
+.qoder
 .vscode
 .CLAUDE.md

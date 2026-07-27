@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class SecurityUtil {
 
 
-    @jakarta.annotation.Nullable
     public static LoginUserInfo getUserInfo() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || authentication.getPrincipal() == null) {
@@ -24,19 +23,16 @@ public class SecurityUtil {
         return (LoginUserInfo) authentication.getPrincipal();
     }
 
-    @jakarta.annotation.Nullable
     public static Long getUserId() {
         LoginUserInfo userInfo = getUserInfo();
         return userInfo != null ? userInfo.getUserId() : null;
     }
 
-    @jakarta.annotation.Nullable
     public static String getUsername() {
         LoginUserInfo userInfo = getUserInfo();
         return userInfo != null ? userInfo.getUsername() : null;
     }
 
-    @jakarta.annotation.Nullable
     public static String getRealName() {
         LoginUserInfo userInfo = getUserInfo();
         return userInfo != null && userInfo.getSysUser() != null

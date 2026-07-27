@@ -6,6 +6,7 @@ import com.zs.common.core.core.Result;
 import com.zs.common.core.enums.OperationTypeEnum;
 import com.zs.common.core.excel.ExcelUtils;
 import com.zs.common.core.page.PageResult;
+import com.zs.common.core.utils.MyTreeNode;
 import com.zs.sys.post.domain.excel.SysPostExcel;
 import com.zs.sys.post.domain.params.SysPostAddParams;
 import com.zs.sys.post.domain.params.SysPostQueryParams;
@@ -102,5 +103,12 @@ public class SysPostController {
         List<SysPostVO> list = iSysPostService.getList(sysPostQueryParams);
         List<SysPostExcel> excelList = BeanUtil.copyToList(list, SysPostExcel.class);
         ExcelUtils.exportExcel(response, "岗位信息.xlsx", SysPostExcel.class, excelList);
+    }
+
+    @Operation(summary = "部门岗位树形")
+    @GetMapping("getDeptPostTree")
+    public Result<List<MyTreeNode>> deptPostTree() {
+        List<MyTreeNode> list = iSysPostService.getDeptPostTree();
+        return new Result<List<MyTreeNode>>().ok(list);
     }
 }

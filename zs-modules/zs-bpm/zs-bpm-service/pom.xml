@@ -12,6 +12,12 @@
     <artifactId>zs-bpm-service</artifactId>
 
     <dependencies>
+        <!-- JUnit 4 支持 -->
+        <dependency>
+            <groupId>org.junit.vintage</groupId>
+            <artifactId>junit-vintage-engine</artifactId>
+            <scope>test</scope>
+        </dependency>
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-common-aop</artifactId>
@@ -36,6 +42,18 @@
             <groupId>com.zs</groupId>
             <artifactId>zs-bpm-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <!-- 系统模块 - 用户/角色/岗位/部门服务 -->
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-system-service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <!-- Flowable BPMN 自动布局 -->
+        <dependency>
+            <groupId>org.flowable</groupId>
+            <artifactId>flowable-bpmn-layout</artifactId>
+            <version>7.1.0</version>
         </dependency>
     </dependencies>
 </project>

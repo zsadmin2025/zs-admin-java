@@ -265,10 +265,25 @@ public class SysDeptServiceImpl extends ServiceImpl<SysDeptMapper, SysDeptEntity
                 });
 
         // 将岗位添加到对应的部门节点下
-        postList.stream()
-                .filter(post -> nodeMap.containsKey(post.getSysDeptId()))
-                .map(post -> new MyTreeNode(post.getSysPostId(), post.getSysDeptId(), post.getPostName()))
-                .forEach(postNode -> nodeMap.get(postNode.getPid()).getChildren().add(postNode));
+        // 说明：
+        // 1. 岗位的 sys_dept_id 应该指向其所属的部门ID
+        // 2. 如果某个部门既有子部门又有岗位，那么子部门和岗位会在同一层级的 children 中
+        // 3. 前端可以通过 type 字段（dept/post）来区分部门和岗位，使用不同的图标或样式展示
+        postList.forEach(post -> {
+            if (post.getSysDeptId() == null) {
+                // 如果岗位没有关联部门，跳过
+                return;
+            }
+            
+            MyTreeNode deptNode = nodeMap.get(post.getSysDeptId());
+            if (deptNode != null) {
+                // 创建岗位节点，type="post" 表示这是岗位节点
+                MyTreeNode postNode = new MyTreeNode(post.getSysPostId(), post.getSysDeptId(), post.getPostName(), "post");
+                // 将岗位添加为部门的子节点
+                deptNode.getChildren().add(postNode);
+            }
+            // 如果找不到对应的部门节点，说明该岗位的sys_dept_id指向的部门不存在或已禁用，跳过该岗位
+        });
 
         return rootList;
     }

@@ -120,6 +120,12 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUserEntity
         return BeanUtil.copyToList(sysUserList, SysUserVO.class);
     }
 
+    @Override
+    public SysUserVO getUserById(Long id) {
+        SysUserEntity sysUserEntity = this.baseMapper.selectById(id);
+        return BeanUtil.copyProperties(sysUserEntity, SysUserVO.class);
+    }
+
 
     @Override
     @Transactional(rollbackFor = Exception.class)

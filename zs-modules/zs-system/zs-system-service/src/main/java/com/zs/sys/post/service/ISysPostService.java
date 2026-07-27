@@ -2,6 +2,7 @@ package com.zs.sys.post.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.zs.common.core.page.PageResult;
+import com.zs.common.core.utils.MyTreeNode;
 import com.zs.sys.post.domain.entity.SysPostEntity;
 import com.zs.sys.post.domain.params.SysPostAddParams;
 import com.zs.sys.post.domain.params.SysPostQueryParams;
@@ -36,5 +37,8 @@ public interface ISysPostService extends IService<SysPostEntity> {
 
     /** 删除 **/
     void delById(Long sysPostId);
+
+    /** 获取部门岗位树 **/
+    List<MyTreeNode> getDeptPostTree();
 
 }

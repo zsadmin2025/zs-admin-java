@@ -66,4 +66,11 @@ public interface ISysUserService extends IService<SysUserEntity> {
      * @return  List<SysUserVO> 列表
      */
     List<SysUserVO> getUserListByPostId(List<Long> sysPostIds);
+
+    /**
+     * 根据id获取用户详情
+     * @param id 用户id
+     * @return  SysUserVO 用户详情
+     */
+    SysUserVO getUserById(Long id);
 }
