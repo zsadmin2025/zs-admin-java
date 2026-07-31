@@ -69,6 +69,11 @@
             <artifactId>zs-bpm-service</artifactId>
         </dependency>
 
+        <!-- 基础 -->
+        <dependency>
+            <groupId>com.zs</groupId>
+            <artifactId>zs-infra-service</artifactId>
+        </dependency>
 
 
 

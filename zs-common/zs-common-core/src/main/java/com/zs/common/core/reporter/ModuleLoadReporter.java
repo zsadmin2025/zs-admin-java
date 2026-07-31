@@ -27,7 +27,7 @@ public class ModuleLoadReporter implements ApplicationListener<ApplicationReadyE
             new ModuleDefinition("zs-mail",      "邮件服务",   "com.zs.mail.config.MailConfig"),
             new ModuleDefinition("zs-sms",       "短信服务",   "com.zs.sms.factory.SmsFactory"),
             new ModuleDefinition("zs-websocket", "WebSocket", "com.zs.config.WebSocketConfig"),
-            new ModuleDefinition("zs-quartz",    "定时任务",   "com.zs.quartz.utils.QuartzUtils"),
+            new ModuleDefinition("zs-quartz",    "定时任务",   "com.zs.infra.quartz.utils.QuartzUtils"),
             new ModuleDefinition("zs-generator", "代码生成",   "com.zs.gen.config.GenConfigProperties"),
             new ModuleDefinition("zs-bpm",       "业务流程",   "com.zs.bpm.BpmMarker")
     );

@@ -29,7 +29,6 @@
     <modules>
         <module>zs-admin</module>
         <module>zs-common</module>
-        <module>zs-quartz</module>
         <module>zs-generator</module>
         <module>zs-modules</module>
         <module>zs-modules/zs-file</module>
@@ -38,6 +37,7 @@
         <module>zs-modules/zs-system</module>
         <module>zs-modules/zs-websocket</module>
         <module>zs-modules/zs-bpm</module>
+        <module>zs-modules/zs-infra</module>
 
     </modules>
 
@@ -162,6 +162,18 @@
             <dependency>
                 <groupId>com.zs</groupId>
                 <artifactId>zs-bpm-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+
+            <!-- 基础服务 -->
+            <dependency>
+                <groupId>com.zs</groupId>
+                <artifactId>zs-infra-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.zs</groupId>
+                <artifactId>zs-infra-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
 
