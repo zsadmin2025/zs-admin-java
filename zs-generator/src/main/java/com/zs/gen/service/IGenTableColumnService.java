@@ -16,7 +16,7 @@ public interface IGenTableColumnService extends IService<GenTableColumn>{
     /**
      * 查询业务字段列表
      * 
-     * @param tableId 业务字段编号
+     * @param tableName 表名称
      * @return 业务字段集合
      */
     List<GenTableColumn> selectTableColumnsByName(String tableName);

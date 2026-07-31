@@ -11,7 +11,7 @@ import java.util.List;
 /**
  * 审批人解析器基类
  * <p>
- * 提供通用的工具方法和异常处理，子类继承后只需实现具体的解析逻辑。
+ * 提供通用的工具方法和异常处理，子类继承后只需实现具体解析逻辑。
  * </p>
  *
  * @author zsadmin
@@ -55,7 +55,7 @@ public abstract class AbstractApproverResolver implements ApproverResolver {
     }
 
     /**
-     * 具体的解析逻辑，由子类实现
+     * 具体解析逻辑，由子类实现
      * 
      * @param param 解析参数
      * @param initiator 发起人ID
