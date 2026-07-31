@@ -445,9 +445,25 @@ public class GenTableServiceImpl extends ServiceImpl<GenTableMapper, GenTable> i
     }
 
 
+    /**
+     * 构建 MyBatis-Plus Generator 数据源配置
+     * <p>
+     * 通过 DataBaseProperties 读取动态数据源配置（spring.datasource.dynamic.datasource.master），
+     * 兜底校验确保 URL 非空。
+     *
+     * @return DataSourceConfig 数据源配置对象
+     */
     private DataSourceConfig generateCodeDataSourceConfig() {
-        return new DataSourceConfig.Builder(dataBaseProperties.getUrl(), dataBaseProperties.getUsername(), dataBaseProperties.getPassword())
-                .build();
+        String url = dataBaseProperties.getUrl();
+        String username = dataBaseProperties.getUsername();
+        String password = dataBaseProperties.getPassword();
+
+        // 兜底校验：确保 URL 不为空
+        if (url == null || url.isEmpty()) {
+            throw new RuntimeException("无法获取数据源 URL，请检查 spring.datasource.dynamic.datasource.master 配置");
+        }
+
+        return new DataSourceConfig.Builder(url, username, password).build();
     }
 
 

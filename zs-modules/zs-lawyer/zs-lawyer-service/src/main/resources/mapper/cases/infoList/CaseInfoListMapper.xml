@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.lawyer.cases.infoList.mapper.CaseInfoListMapper">
+
+
+    <select id="getList" resultType="com.zs.lawyer.cases.infoList.domain.entity.CaseInfoListEntity">
+        SELECT
+            b.case_list_id basic_case_list_id,
+            b.file_name basic_file_name,
+            b.file_original_name basic_file_original_name,
+            b.file_type,
+            b.file_url basic_file_url,
+            b.is_required,
+            a.*
+        FROM case_info_list a
+        RIGHT JOIN basic_case_list b
+        ON b.case_list_id = a.case_list_id
+        AND a.case_info_id = ${caseInfoId}
+        WHERE b.case_type = ${caseType};
+    </select>
+</mapper>

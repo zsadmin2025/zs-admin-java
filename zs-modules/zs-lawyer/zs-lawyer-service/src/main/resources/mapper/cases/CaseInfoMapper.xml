@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.lawyer.cases.info.mapper.CaseInfoMapper">
+
+
+    <select id="findMaxCodeByPrefix" resultType="java.lang.String">
+        select MAX(case_no)
+        from case_info
+        where case_no LIKE CONCAT(#{prefix}, '%')
+
+    </select>
+    <select id="approvePage" resultType="com.zs.lawyer.cases.info.domain.entity.CaseInfoEntity">
+        SELECT a.*
+        FROM case_info a
+        JOIN case_info_approve b ON b.case_info_id = a.case_info_id
+        <where>
+            a.is_approve = 1 AND a.case_status = 1 and a.is_voided = 1
+            <if test="params.approvalLawyer != null and params.approvalLawyer != ''">
+                AND b.approval_lawyer = #{params.approvalLawyer}
+            </if>
+            <if test="params.caseName != null and params.caseName != ''">
+                AND a.case_name LIKE CONCAT('%', #{params.caseName}, '%')
+            </if>
+            <if test="params.caseNo != null and params.caseNo != ''">
+                AND a.case_no LIKE CONCAT('%', #{params.caseNo}, '%')
+            </if>
+            <if test="params.caseType != null and params.caseType != ''">
+                AND a.case_type = #{params.caseType}
+            </if>
+            <if test="params.approveStatus != null and params.approveStatus != ''">
+                AND a.approve_status = #{params.approveStatus}
+            </if>
+            <if test="params.applicantName != null and params.applicantName != ''">
+                AND a.applicant_name = #{params.applicantName}
+            </if>
+        </where>
+    </select>
+    <select id="getRecentThreeMonthRegisteredCase" resultType="com.zs.lawyer.cases.info.domain.entity.CaseInfoEntity">
+        SELECT * FROM `case_info` WHERE apply_date >= DATE_SUB(CURDATE(), INTERVAL 3 MONTH);
+    </select>
+    <select id="getRecentOneMonthHearingCase" resultType="com.zs.lawyer.cases.info.domain.vo.CaseHomeHearingVO">
+        SELECT
+            a.court_time,
+            a.court,
+            b.case_info_id,
+            b.case_name,
+            b.litigation_status,
+            c.customer_name
+        FROM
+            `case_hearing` a
+                LEFT JOIN case_info b ON b.case_info_id = a.case_info_id
+                LEFT JOIN case_customer c ON c.case_info_id = b.case_info_id
+        WHERE
+            a.court_time >= DATE_SUB( CURDATE(), INTERVAL 1 MONTH );
+    </select>
+</mapper>

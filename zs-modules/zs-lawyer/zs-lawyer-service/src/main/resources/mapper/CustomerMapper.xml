@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.zs.lawyer.customer.mapper.CustomerMapper">
+
+    <select id="selectMaxCustomerCode" resultType="java.lang.String">
+        SELECT MAX(customer_code) AS max_customer_id FROM biz_customer WHERE customer_code LIKE  CONCAT(#{dateStr}, '%')
+    </select>
+</mapper>
