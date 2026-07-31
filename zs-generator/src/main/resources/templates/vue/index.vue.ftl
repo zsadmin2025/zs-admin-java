@@ -2,73 +2,92 @@
   <div>
     <zs-container layout="header-main-footer">
       <template #header>
-        <a-row :gutter="16">
-          <a-col :flex="1">
-            <a-form :model="form" :auto-label-width="true" label-align="left">
-              <a-row :gutter="16">
-              <#list columnList as column>
-                <#if column.isQuery == '1'>
-                <a-col :span="6">
-                  <a-form-item field="${column.javaField!}" label="${column.columnComment!}">
-                    <#if column.htmlType == 'input' || column.htmlType == ''>
-                      <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
-                    <#elseif column.htmlType == 'textarea'>
-                      <a-textarea v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" :rows="3" />
-                    <#elseif column.htmlType == 'number'>
-                      <a-input-number v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
-                    <#elseif column.htmlType == 'select'>
-                      <a-select v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
-                        <a-option v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
-                          {{ item.dictLabel }}
-                        </a-option>
-                      </a-select>
-                    <#elseif column.htmlType == 'radio'>
-                      <a-radio-group v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
-                        <a-radio v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
-                          {{ item.dictLabel }}
-                        </a-radio>
-                      </a-radio-group>
-                    <#elseif column.htmlType == 'checkbox'>
-                      <a-checkbox-group v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
-                        <a-checkbox v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
-                          {{ item.dictLabel }}
-                        </a-checkbox>
-                      </a-checkbox-group>
-                    <#elseif column.htmlType == 'date'>
-                      <a-date-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" value-format="YYYY-MM-DD" />
-                    <#elseif column.htmlType == 'datetime'>
-                      <a-date-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" value-format="YYYY-MM-DD HH:mm:ss" show-time />
-                    <#elseif column.htmlType == 'time'>
-                      <a-time-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" format="HH:mm:ss" />
-                    <#elseif column.htmlType == 'image' || column.htmlType == 'upload'>
-                      <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
-                    <#else>
-                      <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" />
-                    </#if>
-                  </a-form-item>
-                </a-col>
+        <a-form :model="form" label-align="left" :auto-label-width="true">
+          <a-row :gutter="[16, 16]">
+          <#assign queryCount = 0>
+          <#list columnList as column>
+            <#if column.isQuery == '1'>
+              <#assign queryCount = queryCount + 1>
+            </#if>
+          </#list>
+          <#assign queryIdx = 0>
+          <#list columnList as column>
+            <#if column.isQuery == '1'>
+            <#if (queryIdx == 3) && (queryCount gt 3)>
+            <template v-if="!collapsed">
+            </#if>
+            <a-col :xs="24" :sm="24" :md="12" :lg="8" :xl="6" :xxl="6">
+              <a-form-item field="${column.javaField!}" label="${column.columnComment!}">
+                <#if column.htmlType == 'input' || column.htmlType == ''>
+                  <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" allow-clear />
+                <#elseif column.htmlType == 'textarea'>
+                  <a-textarea v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" :rows="3" allow-clear />
+                <#elseif column.htmlType == 'number'>
+                  <a-input-number v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" allow-clear />
+                <#elseif column.htmlType == 'select'>
+                  <a-select v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" allow-clear>
+                    <a-option v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
+                      {{ item.dictLabel }}
+                    </a-option>
+                  </a-select>
+                <#elseif column.htmlType == 'radio'>
+                  <a-radio-group v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
+                    <a-radio v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
+                      {{ item.dictLabel }}
+                    </a-radio>
+                  </a-radio-group>
+                <#elseif column.htmlType == 'checkbox'>
+                  <a-checkbox-group v-model="form.${column.javaField!}" placeholder="${column.columnComment!}">
+                    <a-checkbox v-for="item in ${column.dictType!}Options" :key="item.dictValue" :value="item.dictValue">
+                      {{ item.dictLabel }}
+                    </a-checkbox>
+                  </a-checkbox-group>
+                <#elseif column.htmlType == 'date'>
+                  <a-date-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" value-format="YYYY-MM-DD" allow-clear />
+                <#elseif column.htmlType == 'datetime'>
+                  <a-date-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" value-format="YYYY-MM-DD HH:mm:ss" show-time allow-clear />
+                <#elseif column.htmlType == 'time'>
+                  <a-time-picker v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" format="HH:mm:ss" allow-clear />
+                <#elseif column.htmlType == 'image' || column.htmlType == 'upload'>
+                  <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" allow-clear />
+                <#else>
+                  <a-input v-model="form.${column.javaField!}" placeholder="${column.columnComment!}" allow-clear />
                 </#if>
-              </#list>
-              </a-row>
-            </a-form>
-          </a-col>
-          <a-col :flex="'86px'" style="text-align: right">
-            <a-space :size="18">
-              <a-button type="primary" @click="${businessName}Store.fetchData">
-                <template #icon>
-                  <icon-search />
-                </template>
-                {{ $t('searchTable.form.search') }}
-              </a-button>
-              <a-button @click="${businessName}Store.reset">
-                <template #icon>
-                  <icon-refresh />
-                </template>
-                {{ $t('searchTable.form.reset') }}
-              </a-button>
-            </a-space>
-          </a-col>
-        </a-row>
+              </a-form-item>
+            </a-col>
+            <#assign queryIdx = queryIdx + 1>
+            </#if>
+          </#list>
+          <#if queryCount gt 3>
+            </template>
+          </#if>
+            <a-col flex="1">
+              <div style="text-align: right">
+                <a-space :size="9" wrap>
+                  <a-button type="primary" @click="${businessName}Store.fetchData">
+                    <template #icon>
+                      <icon-search />
+                    </template>
+                    {{ $t('searchTable.form.search') }}
+                  </a-button>
+                  <a-button @click="${businessName}Store.reset">
+                    <template #icon>
+                      <icon-refresh />
+                    </template>
+                    {{ $t('searchTable.form.reset') }}
+                  </a-button>
+          <#if queryCount gt 3>
+                  <a-button type="text" @click="collapsed = !collapsed">
+                    {{ collapsed ? '展开' : '收起' }}
+                    <icon-down v-if="collapsed" />
+                    <icon-up v-else />
+                  </a-button>
+          </#if>
+                </a-space>
+              </div>
+            </a-col>
+          </a-row>
+        </a-form>
       </template>
       <template #main-header>
         <a-row justify="space-between" align="center">
@@ -205,6 +224,8 @@
     type: 'checkbox',
     showCheckedAll: true,
   });
+
+  const collapsed = ref(true);
 
   <#if dictTypes?has_content>
   <#list dictTypes as dictType>
