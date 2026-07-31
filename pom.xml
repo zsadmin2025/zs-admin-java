@@ -38,7 +38,6 @@
         <module>zs-modules/zs-system</module>
         <module>zs-modules/zs-websocket</module>
         <module>zs-modules/zs-bpm</module>
-        <module>zs-modules/zs-lawyer</module>
 
     </modules>
 
@@ -166,17 +165,6 @@
                 <version>${project.version}</version>
             </dependency>
 
-            <!-- 律师模块 -->
-            <dependency>
-                <groupId>com.zs</groupId>
-                <artifactId>zs-lawyer-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zs</groupId>
-                <artifactId>zs-lawyer-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
 
             <!-- 代码生成 -->
