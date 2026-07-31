@@ -15,17 +15,14 @@
 
     <dependencies>
 
-        <!-- 定时任务 -->
-        <dependency>
-            <groupId>com.zs</groupId>
-            <artifactId>zs-quartz</artifactId>
-        </dependency>
+
 
         <!-- 代码生成 -->
         <dependency>
             <groupId>com.zs</groupId>
             <artifactId>zs-generator</artifactId>
         </dependency>
+
 
         <!-- 权限 -->
         <dependency>
