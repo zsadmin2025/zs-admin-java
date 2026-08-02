@@ -41,21 +41,21 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
 <#list columnList as column>
 <#if column.isQuery == '1'>
     <#if column.queryType == 'EQ'>
-            wrapper.eq(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.eq(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'NE'>
-            wrapper.ne(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.ne(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'GT'>
-            wrapper.gt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.gt(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'LT'>
-            wrapper.lt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.lt(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'GTE'>
-            wrapper.ge(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.ge(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'LTE'>
-            wrapper.le(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.le(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'LIKE'>
-            wrapper.like(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.like(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'BETWEEN'>
-            wrapper.between(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}Start()) && ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}End()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}Start(), ${className}PageQueryParams.get${column.javaField?cap_first}End());
+            wrapper.between(ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}Start()) && ObjectUtil.isNotEmpty(${className}PageQueryParams.get${column.javaField?cap_first}End()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}Start(), ${className}PageQueryParams.get${column.javaField?cap_first}End());
     </#if>
 </#if>
 </#list>
@@ -71,21 +71,21 @@ public class ${ClassName}ServiceImpl extends ServiceImpl<${ClassName}Mapper, ${C
 <#list columnList as column>
 <#if column.isQuery == '1'>
     <#if column.queryType == 'EQ'>
-            wrapper.eq(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.eq(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'NE'>
-            wrapper.ne(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.ne(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'GT'>
-            wrapper.gt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.gt(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'LT'>
-            wrapper.lt(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.lt(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'GTE'>
-            wrapper.ge(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.ge(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'LTE'>
-            wrapper.le(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.le(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'LIKE'>
-            wrapper.like(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}());
+            wrapper.like(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}SelectQueryParams.get${column.javaField?cap_first}());
     <#elseif column.queryType == 'BETWEEN'>
-            wrapper.between(ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}Start()) && ObjectUtil.isNotNull(${className}PageQueryParams.get${column.javaField?cap_first}End()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}Start(), ${className}PageQueryParams.get${column.javaField?cap_first}End());
+            wrapper.between(ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}Start()) && ObjectUtil.isNotEmpty(${className}SelectQueryParams.get${column.javaField?cap_first}End()), ${ClassName}Entity::get${column.javaField?cap_first}, ${className}PageQueryParams.get${column.javaField?cap_first}Start(), ${className}PageQueryParams.get${column.javaField?cap_first}End());
     </#if>
 </#if>
 </#list>
