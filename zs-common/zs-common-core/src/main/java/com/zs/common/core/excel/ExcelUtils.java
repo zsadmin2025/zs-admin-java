@@ -20,10 +20,9 @@ import java.util.Collection;
  */
 public class ExcelUtils {
 
-
     /**
-     * TODO: 导出Excel
-     * 待完成：在controller调用此方法实现excel导出时，方法添加了AOP日志记录会报错Caused by: java.lang.IllegalStateException: getOutputStream() has already been called for this response。但不影响使用。
+     * 导出Excel
+     *
      */
     public static void exportExcel(@NotNull HttpServletResponse response, @NotNull String fileName, Class<?> clazz, Collection<?> list) throws IOException {
         try {
@@ -33,11 +32,14 @@ public class ExcelUtils {
 
             OutputStream outputStream = response.getOutputStream();
             EasyExcel.write(outputStream, clazz)
-                    .autoCloseStream(true)
+                    // 关闭自动流关闭，解决AOP日志流冲突
+                    .autoCloseStream(false)
                     .registerWriteHandler(new LongestMatchColumnWidthStyleStrategy())
                     .registerConverter(new LongStringConverter())
                     .sheet("")
                     .doWrite(list);
+            // 强制刷新缓冲区，防止数据缺失
+            outputStream.flush();
         } catch (Exception e) {
             // 重置response
             response.reset();

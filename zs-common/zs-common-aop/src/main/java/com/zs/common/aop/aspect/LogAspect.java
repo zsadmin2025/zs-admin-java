@@ -11,8 +11,10 @@ import com.zs.common.core.log.service.ILogErrorAspectService;
 import com.zs.common.core.log.service.ILogOperationAspectService;
 import com.zs.common.core.utils.IpUtils;
 import com.zs.common.core.utils.SecurityUtil;
+import jakarta.annotation.Nullable;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.constraints.NotNull;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.*;
@@ -84,10 +86,16 @@ public class LogAspect {
 
     /**
      * 获取请求体参数
+     * 跳过 HttpServletRequest、HttpServletResponse 等 Servlet 参数，取第一个业务参数
      */
     private String getRequestBody(@NotNull JoinPoint point) {
         Object[] args = point.getArgs();
-        return JSONUtil.toJsonStr(args[0]);
+        for (Object arg : args) {
+            if (arg != null && !(arg instanceof HttpServletRequest) && !(arg instanceof HttpServletResponse)) {
+                return JSONUtil.toJsonStr(arg);
+            }
+        }
+        return "";
     }
 
 
@@ -102,7 +110,8 @@ public class LogAspect {
         MethodSignature methodSignature = (MethodSignature) point.getSignature();
         Method method = methodSignature.getMethod();
         Log annotation = method.getAnnotation(Log.class);
-        Result<?> result = (Result<?>) obj;
+        // void 返回类型的方法（如导出接口）obj 为 null
+        Result<?> result = (obj instanceof Result) ? (Result<?>) obj : null;
 
         SysLogOperationAddParams addParams = createLogOperationParams(annotation, request, params, result);
 
@@ -130,7 +139,7 @@ public class LogAspect {
      * 创建操作日志参数
      */
     @NotNull
-    private SysLogOperationAddParams createLogOperationParams(@NotNull Log annotation, @NotNull HttpServletRequest request, String params, @NotNull Result<?> result) {
+    private SysLogOperationAddParams createLogOperationParams(@NotNull Log annotation, @NotNull HttpServletRequest request, String params, @Nullable Result<?> result) {
         SysLogOperationAddParams addParams = new SysLogOperationAddParams();
         addParams.setUsername(SecurityUtil.getUserInfo().getUsername());
         addParams.setModule(annotation.module());
@@ -140,8 +149,8 @@ public class LogAspect {
         addParams.setRequestMethod(request.getMethod());
         addParams.setRequestPath(request.getRequestURI());
         addParams.setRequestParams(params);
-        addParams.setResponseStatusCode(result.getCode());
-        addParams.setResponseMessage(result.getMsg());
+        addParams.setResponseStatusCode(result != null ? result.getCode() : 200);
+        addParams.setResponseMessage(result != null ? result.getMsg() : "操作成功");
         addParams.setOperationDuration((int) (System.currentTimeMillis() - beginTime));
         addParams.setCreateTime(DateUtil.now());
         return addParams;
