@@ -2,6 +2,7 @@ package com.zs.sys.log.domain.entity;
 
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.zs.common.core.model.BaseEntity;
 import lombok.Data;
 
 
@@ -10,7 +11,7 @@ import lombok.Data;
  */
 @Data
 @TableName("sys_log_login")
-public class SysLogLoginEntity {
+public class SysLogLoginEntity extends BaseEntity {
 
     @TableId
     private Long sysLogLoginId;
