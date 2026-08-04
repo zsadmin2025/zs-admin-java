@@ -1,18 +1,16 @@
 package com.zs.sys.user.api;
 
+import cn.hutool.core.collection.CollUtil;
+import com.zs.sys.api.role.RemoteUserService;
+import com.zs.sys.user.domain.vo.SysUserVO;
+import com.zs.sys.user.service.ISysUserService;
+import jakarta.annotation.Resource;
+import org.springframework.stereotype.Service;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import org.springframework.stereotype.Service;
-
-import com.zs.sys.api.role.RemoteUserService;
-import com.zs.sys.user.domain.vo.SysUserVO;
-import com.zs.sys.user.service.ISysUserService;
-
-import cn.hutool.core.collection.CollUtil;
-import jakarta.annotation.Resource;
 
 /**
  * 远程用户服务实现，委托给 ISysUserService 处理
