@@ -1,11 +1,12 @@
 package com.zs.common.core.config;
 
-import jakarta.validation.constraints.NotNull;
+import java.util.concurrent.ThreadPoolExecutor;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import java.util.concurrent.ThreadPoolExecutor;
+import jakarta.validation.constraints.NotNull;
 
 @Configuration
 public class ThreadPoolConfig {
@@ -31,6 +32,8 @@ public class ThreadPoolConfig {
         executor.setKeepAliveSeconds(60);
         // 设置默认线程名称
         executor.setThreadNamePrefix("zs-thread-");
+        // 设置线程上下文传递装饰器，将租户上下文、请求上下文、安全上下文传递到异步线程
+        executor.setTaskDecorator(new ContextPropagatingTaskDecorator());
         // 设置拒绝策略
         // 有4中策略，分别是。
         // ThreadPoolExecutor.AbortPolicy：丢弃任务并抛出RejectedExecutionException异常。

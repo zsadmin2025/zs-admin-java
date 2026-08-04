@@ -1,16 +1,7 @@
 package com.zs.common.aop.aspect;
 
-import cn.hutool.core.date.DateUtil;
-import cn.hutool.http.useragent.UserAgent;
-import cn.hutool.http.useragent.UserAgentUtil;
-import com.zs.common.aop.annotation.LoginLog;
-import com.zs.common.core.log.params.SysLogLoginAddParams;
-import com.zs.common.core.log.service.ILogLoginAspectService;
-import com.zs.common.core.utils.IpUtils;
-import jakarta.annotation.Nullable;
-import jakarta.annotation.Resource;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.validation.constraints.NotNull;
+import java.lang.reflect.Method;
+
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
@@ -23,7 +14,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
-import java.lang.reflect.Method;
+import com.zs.common.aop.annotation.LoginLog;
+import com.zs.common.core.log.params.SysLogLoginAddParams;
+import com.zs.common.core.log.service.ILogLoginAspectService;
+import com.zs.common.core.utils.IpUtils;
+
+import cn.hutool.core.date.DateUtil;
+import cn.hutool.http.useragent.UserAgent;
+import cn.hutool.http.useragent.UserAgentUtil;
+import jakarta.annotation.Nullable;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.constraints.NotNull;
 
 /**
  * @author zsadmin
@@ -52,7 +54,7 @@ public class LogLoginAspect {
         return object;
     }
 
-    @Async
+    @Async("threadPoolExecutor")
     void saveLoginLog(@NotNull ProceedingJoinPoint proceedingJoinPoint) {
         Object[] objects = proceedingJoinPoint.getArgs();
         Throwable failureReason = null;
