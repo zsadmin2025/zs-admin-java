@@ -38,7 +38,6 @@
         <module>zs-modules/zs-websocket</module>
         <module>zs-modules/zs-bpm</module>
         <module>zs-modules/zs-infra</module>
-        <module>zs-modules/zs-business</module>
 
     </modules>
 
@@ -177,20 +176,6 @@
                 <artifactId>zs-infra-service</artifactId>
                 <version>${project.version}</version>
             </dependency>
-
-            <!-- 商品 -->
-            <dependency>
-                <groupId>com.zs</groupId>
-                <artifactId>zs-business-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.zs</groupId>
-                <artifactId>zs-business-service</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-
-
 
             <!-- 代码生成 -->
             <dependency>

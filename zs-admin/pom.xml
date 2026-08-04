@@ -72,13 +72,6 @@
             <artifactId>zs-infra-service</artifactId>
         </dependency>
 
-        <!-- 业务 -->
-        <dependency>
-            <groupId>com.zs</groupId>
-            <artifactId>zs-business-service</artifactId>
-        </dependency>
-
-
 
     </dependencies>
 
