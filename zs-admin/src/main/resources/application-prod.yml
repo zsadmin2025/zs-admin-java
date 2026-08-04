@@ -46,15 +46,15 @@ spring:
       datasource:
         master:
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://172.17.0.1:3306/zs_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-          username: zsAdmin
-          password: XsYNYM7LkheRLnCk
+          url: jdbc:mysql://172.17.0.1:3306/mis_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+          username: mis_admin
+          password: Yz88YapZkEiphGE6
         # 从库数据源（只读）
         slave:
           driver-class-name: com.mysql.cj.jdbc.Driver
-          url: jdbc:mysql://172.17.0.1:3306/zs_admin1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-          username: zsAdmin1
-          password: XsYNYM7LkheRLnCk
+          url: jdbc:mysql://172.17.0.1:3306/mis_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+          username: mis_admin
+          password: Yz88YapZkEiphGE6
 
   data:
     redis:

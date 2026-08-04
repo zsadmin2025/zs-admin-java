@@ -1,0 +1,159 @@
+package com.zs.business.partner.partner.domain.params;
+
+import lombok.Getter;
+import lombok.Setter;
+import java.io.Serializable;
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
+
+import java.util.Date;
+import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
+/**
+ * <p>
+ * 往来单位
+ * </p>
+ *
+ * @author zs
+ * {@code @date} 2026-08-02 11:23:09
+ */
+@Getter
+@Setter
+@Schema(description = "往来单位AddParams对象")
+public class BusinessPartnerAddParams implements Serializable {
+
+
+    @Schema(description = "合作方分类ID，关联business_partner_category.id")
+    @NotNull(message = "合作方分类ID，关联business_partner_category.id不能为空")
+    private Long partnerCategoryId;
+
+    @Schema(description = "企业名称")
+    @NotBlank(message = "企业名称不能为空")
+    @Size(max = 200, message = "企业名称长度不能超过200")
+    private String companyName;
+
+    @Schema(description = "单位类型(字段)")
+    @NotNull(message = "单位类型(字段)不能为空")
+    private Long partnerType;
+
+    @Schema(description = "企业地址")
+    @NotBlank(message = "企业地址不能为空")
+    @Size(max = 500, message = "企业地址长度不能超过500")
+    private String companyAddress;
+
+    @Schema(description = "仓库地址")
+    @NotBlank(message = "仓库地址不能为空")
+    @Size(max = 500, message = "仓库地址长度不能超过500")
+    private String warehouseAddress;
+
+    @Schema(description = "简称")
+    @Size(max = 100, message = "简称长度不能超过100")
+    private String shortName;
+
+    @Schema(description = "名称首拼（用于快速检索）")
+    @Size(max = 200, message = "名称首拼（用于快速检索）长度不能超过200")
+    private String namePinyin;
+
+    @Schema(description = "联系人")
+    @Size(max = 100, message = "联系人长度不能超过100")
+    private String contactPerson;
+
+    @Schema(description = "企业电话")
+    @Size(max = 50, message = "企业电话长度不能超过50")
+    private String companyPhone;
+
+    @Schema(description = "手机号")
+    @Size(max = 20, message = "手机号长度不能超过20")
+    private String mobile;
+
+    @Schema(description = "传真")
+    @Size(max = 50, message = "传真长度不能超过50")
+    private String fax;
+
+    @Schema(description = "电子邮箱")
+    @Size(max = 100, message = "电子邮箱长度不能超过100")
+    private String email;
+
+    @Schema(description = "档案号")
+    @Size(max = 100, message = "档案号长度不能超过100")
+    private String fileNo;
+
+    @Schema(description = "结算状态 0-未结算 1-已结算")
+    private Integer settlementStatus;
+
+    @Schema(description = "结算账期(天)")
+    private Integer settlementPeriod;
+
+    @Schema(description = "单位状态 1启用 0停用")
+    @NotNull(message = "单位状态 1启用 0停用不能为空")
+    private Integer status;
+
+    @Schema(description = "统一社会信用代码")
+    @Size(max = 50, message = "统一社会信用代码长度不能超过50")
+    private String socialCreditCode;
+
+    @Schema(description = "有效期至")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @JsonFormat(pattern = "yyyy-MM-dd", timezone = "GMT+8")
+    private Date validUntil;
+
+    @Schema(description = "开户银行")
+    @Size(max = 200, message = "开户银行长度不能超过200")
+    private String bankName;
+
+    @Schema(description = "银行账号")
+    @Size(max = 100, message = "银行账号长度不能超过100")
+    private String bankAccount;
+
+    @Schema(description = "企业负责人")
+    @Size(max = 100, message = "企业负责人长度不能超过100")
+    private String companyPrincipal;
+
+    @Schema(description = "企业负责人-联系电话")
+    @Size(max = 30, message = "企业负责人-联系电话长度不能超过30")
+    private String principalPhone;
+
+    @Schema(description = "企业管理员")
+    @Size(max = 100, message = "企业管理员长度不能超过100")
+    private String companyManager;
+
+    @Schema(description = "企业管理员-联系电话")
+    @Size(max = 30, message = "企业管理员-联系电话长度不能超过30")
+    private String managerPhone;
+
+    @Schema(description = "质量负责人")
+    @Size(max = 100, message = "质量负责人长度不能超过100")
+    private String qualityPrincipal;
+
+    @Schema(description = "质量负责人-联系电话")
+    @Size(max = 30, message = "质量负责人-联系电话长度不能超过30")
+    private String qualityPhone;
+
+    @Schema(description = "质量管理员")
+    @Size(max = 100, message = "质量管理员长度不能超过100")
+    private String qualityManager;
+
+    @Schema(description = "质量管理员联系电话")
+    @Size(max = 20, message = "质量管理员联系电话长度不能超过20")
+    private String qualityManagerPhone;
+
+    @Schema(description = "财务负责人")
+    @Size(max = 100, message = "财务负责人长度不能超过100")
+    private String financePrincipal;
+
+    @Schema(description = "财务负责人联系电话")
+    @Size(max = 20, message = "财务负责人联系电话长度不能超过20")
+    private String financePhone;
+
+    @Schema(description = "质量机构负责人")
+    @Size(max = 100, message = "质量机构负责人长度不能超过100")
+    private String qualityOrgPrincipal;
+
+    @Schema(description = "质量机构负责人联系电话")
+    @Size(max = 20, message = "质量机构负责人联系电话长度不能超过20")
+    private String qualityOrgPhone;
+
+}

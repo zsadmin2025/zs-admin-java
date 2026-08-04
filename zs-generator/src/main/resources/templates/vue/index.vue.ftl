@@ -202,6 +202,7 @@
 <script lang="ts" setup>
   import {storeToRefs} from 'pinia';
   import {computed, onMounted, reactive, ref} from 'vue';
+  import type { TableRowSelection } from '@arco-design/web-vue';
   import type { TableColumnData } from '@arco-design/web-vue/es/table/interface';
   <#assign dictTypes = []>
   <#list columnList as column>
@@ -213,14 +214,14 @@
   import useDict from '@/hooks/dict';
   import { DictData } from '@/types/sys/dict/DictData';
   </#if>
-  import { use${businessName}Store } from '@/store/modules/${moduleName}/${businessName}/${businessName}Store';
+  import { use${BusinessName}Store } from '@/store/modules/${moduleName}/${businessName}/${businessName}Store';
   import ${BusinessName}AddOrEdit from './${businessName}-add-or-edit.vue';
 
   const ${businessName}Store = use${BusinessName}Store();
   const { addEditRef, loading, list, total, form, selectedKeys } = 
   storeToRefs(${businessName}Store);
 
-  const rowSelection = reactive({
+  const rowSelection = reactive<TableRowSelection>({
     type: 'checkbox',
     showCheckedAll: true,
   });
@@ -264,9 +265,9 @@
     },
   ]);
 
-  const currentSize = ref('medium');
+  const currentSize = ref<'small' | 'medium' | 'mini' | 'large'>('medium');
   const handleSizeChange = (size: string) => {
-    currentSize.value = size;
+    currentSize.value = size as 'small' | 'medium' | 'mini' | 'large';
   };
 
   <#if dictTypes?has_content>
