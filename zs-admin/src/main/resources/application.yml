@@ -101,10 +101,12 @@ security:
     url:
       - /auth/captcha
       - /auth/login
+      - /auth/refresh
       - /system/sys/tenant/select
       - /system/sys/config/website
       - /member/auth/captcha
       - /member/auth/login
+      - /member/auth/refresh
       - /file/**
       - /actuator/** # 允许访问执行器端点
       - /instances/** # 允许访问 Spring Boot Admin 实例
@@ -124,8 +126,10 @@ security:
 jwt:
   # 密钥 长度256
   secret: QxXJ18vaaiH0781h6rzMurcyJNzcGtsWYfzc/OyqKBI=
-  # 有效时间单位秒 当前为24小时
+  # access_token 有效时间单位秒 当前为24小时
   expiration: 86400
+  # refresh_token 有效时间单位秒 当前为7天
+  refresh-expiration: 604800
 
 springdoc:
   swagger-ui:

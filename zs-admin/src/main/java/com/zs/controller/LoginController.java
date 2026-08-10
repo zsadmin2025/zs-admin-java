@@ -5,6 +5,7 @@ import com.zs.common.core.crypto.annotation.Decryption;
 import com.zs.common.core.enums.CryptoTypeEnum;
 import com.zs.common.security.model.TokenVO;
 import com.zs.domain.params.LoginParams;
+import com.zs.domain.params.RefreshTokenParams;
 import com.zs.domain.vo.CodeVO;
 import com.zs.service.ILoginService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,7 +41,11 @@ public class LoginController {
         return loginService.captcha(request, response);
     }
 
-
+    @Operation(summary = "刷新token")
+    @PostMapping("refresh")
+    public Result<TokenVO> refresh(@Valid @RequestBody RefreshTokenParams params) {
+        return loginService.refresh(params);
+    }
 
 
 }

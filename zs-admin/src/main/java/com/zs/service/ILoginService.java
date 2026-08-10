@@ -3,6 +3,7 @@ package com.zs.service;
 import com.zs.common.core.core.Result;
 import com.zs.common.security.model.TokenVO;
 import com.zs.domain.params.LoginParams;
+import com.zs.domain.params.RefreshTokenParams;
 import com.zs.domain.vo.CodeVO;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -36,4 +37,11 @@ public interface ILoginService {
      * @return 校验结果
      */
     boolean checkCaptcha(String uuid, String code);
+
+    /**
+     * 刷新 token
+     * @param params 刷新参数
+     * @return 新的 token 信息
+     */
+    Result<TokenVO> refresh(RefreshTokenParams params);
 }

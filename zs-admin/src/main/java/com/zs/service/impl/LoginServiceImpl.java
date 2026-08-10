@@ -7,6 +7,7 @@ import cn.hutool.core.util.IdUtil;
 import com.zs.common.aop.annotation.LoginLog;
 import com.zs.common.core.constant.RedisConstants;
 import com.zs.common.core.core.Result;
+import com.zs.common.core.enums.UserTypeEnum;
 import com.zs.common.core.exception.ErrorCodeConstants;
 import com.zs.common.core.exception.ZsException;
 import com.zs.common.core.model.LoginUserInfo;
@@ -15,8 +16,10 @@ import com.zs.common.core.utils.JwtUtil;
 import com.zs.common.redis.config.RedisUtil;
 import com.zs.common.security.model.TokenVO;
 import com.zs.domain.params.LoginParams;
+import com.zs.domain.params.RefreshTokenParams;
 import com.zs.domain.vo.CodeVO;
 import com.zs.service.ILoginService;
+import io.jsonwebtoken.Claims;
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -80,9 +83,14 @@ public class LoginServiceImpl implements ILoginService {
         String redisKey = jwtUtil.getLoginInfoKey(loginUserInfo.getUserType(), loginUserInfo.getUserId());
         redisUtil.setObject(redisKey, loginUserInfo, jwtUtil.getExpirationTime(), TimeUnit.SECONDS);
 
+        // 生成 refresh token 并存入 Redis（更长的过期时间）
+        String refreshToken = jwtUtil.createRefreshToken(loginUserInfo);
+        String refreshKey = jwtUtil.getRefreshTokenKey(loginUserInfo.getUserType(), loginUserInfo.getUserId());
+        redisUtil.setObject(refreshKey, refreshToken, jwtUtil.getRefreshExpirationTime(), TimeUnit.SECONDS);
+
         TokenVO tokenVO = new TokenVO();
         tokenVO.setAccessToken(jwtUtil.createToken(loginUserInfo));
-        tokenVO.setRefreshToken("");
+        tokenVO.setRefreshToken(refreshToken);
         return tokenVO;
     }
 
@@ -153,4 +161,48 @@ public class LoginServiceImpl implements ILoginService {
 //        String decryptedKey = CryptoUtil.sm2Decrypt(cryptoKey).replace("\"", "");
 //        redisUtil.setObject(RedisConstants.SM4_KEY + sysUser.getSysUserId(), decryptedKey);
 //    }
+
+    @Override
+    public Result<TokenVO> refresh(RefreshTokenParams params) {
+        String refreshToken = params.getRefreshToken();
+
+        // 1. 解析 refresh token
+        Claims claims = jwtUtil.parseToken(refreshToken);
+        if (claims == null) {
+            throw new ZsException("refresh token 无效或已过期");
+        }
+
+        // 2. 校验是否为 refresh token 类型
+        if (!jwtUtil.isRefreshToken(claims)) {
+            throw new ZsException("非法的 token 类型");
+        }
+
+        // 3. 从 Redis 校验 refresh token 是否仍然有效
+        String refreshKey = claims.getSubject();
+        String storedToken = (String) redisUtil.get(refreshKey);
+        if (storedToken == null || !storedToken.equals(refreshToken)) {
+            throw new ZsException("refresh token 已失效，请重新登录");
+        }
+
+        // 4. 获取已登录的用户信息
+        String userType = claims.get("userType", String.class);
+        Long userId = claims.get("userId", Long.class);
+        String loginKey = jwtUtil.getLoginInfoKey(UserTypeEnum.fromCode(userType), userId);
+        LoginUserInfo loginUserInfo = (LoginUserInfo) redisUtil.get(loginKey);
+        if (loginUserInfo == null) {
+            throw new ZsException("登录已过期，请重新登录");
+        }
+
+        // 5. 旋转 refresh token（删除旧的，生成新的，防止重放攻击）
+        redisUtil.del(refreshKey);
+        String newRefreshToken = jwtUtil.createRefreshToken(loginUserInfo);
+        String newRefreshKey = jwtUtil.getRefreshTokenKey(loginUserInfo.getUserType(), loginUserInfo.getUserId());
+        redisUtil.setObject(newRefreshKey, newRefreshToken, jwtUtil.getRefreshExpirationTime(), TimeUnit.SECONDS);
+
+        // 6. 签发新的 access token
+        TokenVO tokenVO = new TokenVO();
+        tokenVO.setAccessToken(jwtUtil.createToken(loginUserInfo));
+        tokenVO.setRefreshToken(newRefreshToken);
+        return new Result<TokenVO>().ok(tokenVO);
+    }
 }

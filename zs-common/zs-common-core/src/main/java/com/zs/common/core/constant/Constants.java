@@ -48,6 +48,11 @@ public class Constants {
     public static final String COMPANION_LOGIN_INFO = "companion_login_info:";
 
     /**
+     * refresh_token Redis key 前缀
+     **/
+    public static final String REFRESH_TOKEN = "refresh_token:";
+
+    /**
      *  access_token
      */
     public static final String ACCESS_TOKEN = "token";

@@ -36,8 +36,10 @@ public class JwtUtil {
     // 从配置文件中读取密钥
     @Value("${jwt.secret}")
     private String secret;
-    @Value("${jwt.expiration}") // 从配置文件中读取过期时间（单位：分钟）
+    @Value("${jwt.expiration}") // 从配置文件中读取过期时间（单位：秒）
     private Long expirationTime;
+    @Value("${jwt.refresh-expiration}") // refresh_token 过期时间（单位：秒），默认7天
+    private Long refreshExpirationTime;
     private SecretKey secretKey;
 
     @PostConstruct
@@ -101,6 +103,46 @@ public class JwtUtil {
 
     public Long getExpirationTime() {
         return expirationTime;
+    }
+
+    public Long getRefreshExpirationTime() {
+        return refreshExpirationTime;
+    }
+
+    /**
+     * 签发 refresh token，有效期比 access token 更长
+     */
+    public String createRefreshToken(LoginUserInfo loginUserInfo) {
+        BaseUserInfo user = loginUserInfo.getUserInfo();
+        String tenantId = TenantContext.getTenantId();
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("userType", user.getUserType().getCode());
+        claims.put("userId", user.getUserId());
+        claims.put("tenantId", tenantId);
+        claims.put("tokenType", "refresh");
+
+        return Jwts.builder()
+                .claims(claims)
+                .subject(getRefreshTokenKey(user.getUserType(), user.getUserId()))
+                .issuer(ISSUER)
+                .issuedAt(new Date())
+                .expiration(new Date(System.currentTimeMillis() + refreshExpirationTime * 1000L))
+                .signWith(secretKey, Jwts.SIG.HS256)
+                .compact();
+    }
+
+    /**
+     * 获取 refresh token 在 Redis 中的存储 key
+     */
+    public String getRefreshTokenKey(UserTypeEnum userType, Long userId) {
+        return Constants.REFRESH_TOKEN + userType.getCode() + ":" + userId;
+    }
+
+    /**
+     * 判断 token 是否为 refresh token 类型
+     */
+    public boolean isRefreshToken(Claims claims) {
+        return "refresh".equals(claims.get("tokenType", String.class));
     }
 
     public String getLoginInfoKey(UserTypeEnum userType, Long userId) {
