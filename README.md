@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://zs-admin.oss-cn-beijing.aliyuncs.com/logo.png" alt="ZS-Admin Logo" width="180" />
+  <img src="https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/logo.png" alt="ZS-Admin Logo" width="180" />
   <h1>ZS-Admin</h1>
   <p>🚀 企业级前后端分离快速开发平台 · 开箱即用 · 安全 · 可扩展</p>
 
@@ -34,7 +34,7 @@
 | 🖥️ **在线演示** | [http://demo.zsadmin.top](http://demo.zsadmin.top) |
 | 👤 演示账号     | `admin / 123456`（请勿修改关键配置）               |
 
-## <img src="https://zs-admin.oss-cn-beijing.aliyuncs.com/work.png" alt="ZS-Admin Logo" />
+## <img src="./src/assets/work.png" alt="ZS-Admin Logo" />
 
 ## ⚙️ 技术栈
 
@@ -46,10 +46,11 @@
 
 ## 🗂️ 源码仓库
 
-| 平台      | 前端                                                              | 后端                                                      |
-| --------- | ----------------------------------------------------------------- | --------------------------------------------------------- |
-| **Gitee** | [zs-ui-acro-design](https://gitee.com/zs-admin/zs-ui-acro-design) | [zs-admin-java](https://gitee.com/zs-admin/zs-admin-java) |
-| GitHub    | _暂未同步_                                                        | _暂未同步_                                                |
+| 平台        | 前端                                                                   | 后端                                                           |
+| ----------- | ---------------------------------------------------------------------- | -------------------------------------------------------------- |
+| **Gitee**   | [zs-ui-acro-design](https://gitee.com/zs-admin/zs-ui-acro-design)      | [zs-admin-java](https://gitee.com/zs-admin/zs-admin-java)      |
+| **GitHub**  | [zs-ui-acro-design](https://github.com/zsadmin2025/zs-ui-acro-design)  | [zs-admin-java](https://github.com/zsadmin2025/zs-admin-java)  |
+| **Gitcode** | [zs-ui-acro-design](https://gitcode.com/zsadmin2025/zs-ui-acro-design) | [zs-admin-java](https://gitcode.com/zsadmin2025/zs-admin-java) |
 
 > ⭐ 欢迎 Star、Fork 与 PR！您的支持是我们持续迭代的动力！
 
@@ -107,8 +108,30 @@
 | ✅ **现代化 UI**  | 基于 Arco Design Vue，简洁美观，响应式布局        |
 | ✅ **易于扩展**   | 模块化结构，新增业务模块只需关注核心逻辑          |
 
+## 示例
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/1.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/2.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/3.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/4.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/5.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/6.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/7.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/8.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/9.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/10.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/11.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/12.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/13.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/14.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/15.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/16.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/17.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/18.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/19.png)
+![输入图片说明](https://gitee.com/zsadmin2025/zs-ui-acro-design/raw/master/src/assets/images/other/20.png)
+
 ## 🤝 参与共建
 
-- 🐞 **反馈问题**：[提交 Issue](https://gitee.com/zs-admin/zs-admin-java/issues)
+- 🐞 **反馈问题**：[提交 Issue](https://gitee.com/zs-admin/zs-ui-acro-design/issues)
 - 💡 **贡献代码**：欢迎 Fork 并提交 PR，共同完善 ZS-Admin！
 - 💬 **加入社区**：关注官网底部获取 **官方 QQ 群 / 微信公众号** 入口
