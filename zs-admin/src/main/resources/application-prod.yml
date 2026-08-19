@@ -47,13 +47,13 @@ spring:
         master:
           driver-class-name: com.mysql.cj.jdbc.Driver
           url: jdbc:mysql://172.17.0.1:3306/zs_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-          username: zs_admin
+          username: zsAdmin
           password: XsYNYM7LkheRLnCk
         # 从库数据源（只读）
         slave:
           driver-class-name: com.mysql.cj.jdbc.Driver
           url: jdbc:mysql://172.17.0.1:3306/zs_admin?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
-          username: zs_admin
+          username: zsAdmin
           password: XsYNYM7LkheRLnCk
 
   data:
